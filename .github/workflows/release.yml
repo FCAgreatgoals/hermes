@@ -1,7 +1,6 @@
 on:
-    push:
-        branches: [main]
-        tags: [v*]
+  release:
+    types: published
 
 jobs:
 
@@ -32,3 +31,15 @@ jobs:
               run: npm publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Release to GitHub Registry
+              run: |
+                npm config set registry https://npm.pkg.github.com/
+                npm set //npm.pkg.github.com/:_authToken $NODE_AUTH_TOKEN
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Release to GitHub Registry
+              run: npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
