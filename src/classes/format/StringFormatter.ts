@@ -1,3 +1,5 @@
+import ValueFormatter from "./ValueFormatter";
+
 export default class StringFormatter {
 
     public resolve(object: any): string {
@@ -38,11 +40,11 @@ export class FormattedString {
     }
 
     private static parseExpression(expression: string): StringFormatter {
-        const data = expression.match(/%(\w+)(?::(\w+)\((.+)\))?%/)
+        const data = expression.match(/(\w+)(?::(\w+)\((.+)\))?/)
         if (!data)
-            throw new Error('Invalid expression')
+            throw new Error(`Invalid expression: ${expression}`)
         if (!data[2]) {
-            // return ValueFormatter
+            return new ValueFormatter(data[1])
         }
         switch (data[2]) {
             case 'date': {
@@ -67,8 +69,12 @@ export class FormattedString {
     public resolve(object: any): string {
         let result = ''
         for (const part of this.parts) {
-            if (part instanceof StringFormatter) {
-                result += part.resolve(object)
+            if (typeof part === 'object') {
+                try {
+                    result += part.resolve(object)
+                } catch (e: any) {
+                    throw new Error(`Error resolving part: ${e.message}`)
+                }
             } else {
                 result += part
             }
