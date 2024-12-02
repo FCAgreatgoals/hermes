@@ -13,6 +13,7 @@ export class FormattedString {
     private constructor(parts: (string | StringFormatter)[]) {
         this.parts = parts
     }
+
     public static create(string: string): FormattedString {
         const parts: (string | StringFormatter)[] = [];
         let index = 0
@@ -37,6 +38,29 @@ export class FormattedString {
     }
 
     private static parseExpression(expression: string): StringFormatter {
+        const data = expression.match(/%(\w+)(?::(\w+)\((.+)\))?%/)
+        if (!data)
+            throw new Error('Invalid expression')
+        if (!data[2]) {
+            // return ValueFormatter
+        }
+        switch (data[2]) {
+            case 'date': {
+                // return DateFormatter
+            }
+            case 'if': {
+                // return ConditionalFormatter
+            }
+            case 'plural': {
+                // return PluralFormatter
+            }
+            case 'either': {
+                // return TernaryFormatter
+            }
+            case 'switch': {
+                // return SwitchFormatter
+            }
+        }
         return new StringFormatter()
     }
 
