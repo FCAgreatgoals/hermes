@@ -1,11 +1,11 @@
 {
   "name": "hermes-i18n",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "keywords": [],
   "author": "IchiiDev",
   "repository": {
-    "url": "git@github.com:IchiiDev/hermes.git"
+    "url": "https://github.com/IchiiDev/hermes.git"
   },
   "license": "ISC",
   "description": "A simple and lightweight i18n library for Node.js",
