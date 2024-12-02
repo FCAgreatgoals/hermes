@@ -1,6 +1,9 @@
+import DateFormatter from "./DateFormatter";
 import ValueFormatter from "./ValueFormatter";
 
-export default class StringFormatter {
+export class StringFormatter {
+
+    constructor() {}
 
     public resolve(object: any): string {
         return '[DEFAULT FORMATTER]'
@@ -47,9 +50,8 @@ export class FormattedString {
             return new ValueFormatter(data[1])
         }
         switch (data[2]) {
-            case 'date': {
-                // return DateFormatter
-            }
+            case 'date':
+                return new DateFormatter(data[1], data[3])
             case 'if': {
                 // return ConditionalFormatter
             }
