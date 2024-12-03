@@ -68,8 +68,14 @@ export class FormattedString {
         return new StringFormatter()
     }
 
+    public isEmpty(): boolean {
+        return this.parts.length > 1 || this.parts[0] !== ''
+    }
+
     public resolve(object: any): string {
         let result = ''
+        if (this.parts.length === 1 && object === undefined)
+            throw new Error('An object is required to resolve the string')
         for (const part of this.parts) {
             if (typeof part === 'object') {
                 try {
