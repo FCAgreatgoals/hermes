@@ -1,3 +1,4 @@
+import ConditionalFormatter from "./ConditionalFormatter";
 import DateFormatter from "./DateFormatter";
 import ValueFormatter from "./ValueFormatter";
 
@@ -52,9 +53,8 @@ export class FormattedString {
         switch (data[2]) {
             case 'date':
                 return new DateFormatter(data[1], data[3])
-            case 'if': {
-                // return ConditionalFormatter
-            }
+            case 'if':
+                return new ConditionalFormatter(data[1], data[3])
             case 'plural': {
                 // return PluralFormatter
             }
