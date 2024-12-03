@@ -3,6 +3,7 @@ import DateFormatter from "./DateFormatter";
 import ValueFormatter from "./ValueFormatter";
 import TernaryFormatter from "./TernaryFormatter";
 import PluralFormatter from "./PluralFormatter";
+import SwitchFormatter from "./SwitchFormatter";
 
 export class StringFormatter {
 
@@ -61,9 +62,8 @@ export class FormattedString {
                 return new PluralFormatter(data[1], data[3])
             case 'either':
                 return new TernaryFormatter(data[1], data[3])
-            case 'switch': {
-                // return SwitchFormatter
-            }
+            case 'switch':
+                return new SwitchFormatter(data[1], data[3])
         }
         return new StringFormatter()
     }
