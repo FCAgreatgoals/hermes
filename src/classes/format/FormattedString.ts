@@ -2,6 +2,7 @@ import ConditionalFormatter from "./ConditionalFormatter";
 import DateFormatter from "./DateFormatter";
 import ValueFormatter from "./ValueFormatter";
 import TernaryFormatter from "./TernaryFormatter";
+import PluralFormatter from "./PluralFormatter";
 
 export class StringFormatter {
 
@@ -56,12 +57,10 @@ export class FormattedString {
                 return new DateFormatter(data[1], data[3])
             case 'if':
                 return new ConditionalFormatter(data[1], data[3])
-            case 'plural': {
-                // return PluralFormatter
-            }
-            case 'either': {
+            case 'plural':
+                return new PluralFormatter(data[1], data[3])
+            case 'either':
                 return new TernaryFormatter(data[1], data[3])
-            }
             case 'switch': {
                 // return SwitchFormatter
             }
