@@ -12,8 +12,22 @@ const getLogLevel = (strategy: WarnStrategy) => {
     }
 }
 
+/**
+ * @typedef WarnStrategy
+ * @description Defined strategies for checks
+ * @version 'throw' - throw an error
+ * @version 'warn' - log a warning
+ * @version 'ignore' - ignore the issue
+ */
 export type WarnStrategy = 'throw' | 'warn' | 'ignore';
 
+/**
+ * @typedef HermesInitOptions
+ * @description Options for the i18n system
+ * @property {string} translationDir - Directory where translations are stored
+ * @property {WarnStrategy} noMissingTranslations - Strategy for missing translations (throw, warn, ignore)
+ * @property {WarnStrategy} noEmptyTranslations - Strategy for empty translations (throw, warn, ignore)
+ */
 export type HermesInitOptions =  Partial<{
     translationDir: string,
     noMissingTranslations: WarnStrategy,
@@ -28,6 +42,12 @@ export default class Hermes {
     private translations: Record<Langs, LangData> = {} as Record<Langs, LangData>
     private readonly options: HermesInitOptions = {}
 
+    /**
+     * @method init
+     * @description Initialize the i18n system
+     *
+     * @param options (optional) options for the i18n system
+     */
     public static async init(options: HermesInitOptions = {
         translationDir: './translations', // default value
         noMissingTranslations: 'warn', // default value
@@ -63,6 +83,14 @@ export default class Hermes {
         }
     }
 
+    /**
+     * @method getContext
+     * @description Get a context for a specific language
+     *
+     * @param lang language key (e.g. 'en-US', 'fr', etc...)
+     * @param basePath (optional) base path for translations
+     * @returns
+     */
     public static getContext(lang: LangsKeys, basePath: string = '') {
         if (!Hermes.instance)
             throw new Error('I18n not initialized');
@@ -71,6 +99,13 @@ export default class Hermes {
         return Context.create(Hermes.instance.translations[lang], basePath);
     }
 
+    /**
+     * @method getLocalizedObject
+     * @description Get a localized object for a specific key
+     *
+     * @param key
+     * @returns LocalizedObject
+     */
     public static getLocalizedObject(key: string): LocalizedObject {
         if (!Hermes.instance)
             throw new Error('I18n not initialized');
