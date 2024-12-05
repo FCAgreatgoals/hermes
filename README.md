@@ -32,6 +32,11 @@ translations/
   fr.json
   de.json
 ```
+
+> [!NOTE]
+> Hermes supports JSON5 parsing. This means you can use comments, trailing commas, and other features that are not supported in standard JSON.
+> You can use the JSON5 syntax out of the box in any `.json` files, but for standards it is recommended to use the `.json5` extension when using the more recent syntax.
+
 For languages list:
 <details>
     <sumary><i>Click here to develop</i></summary>
