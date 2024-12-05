@@ -15,6 +15,12 @@ Clone the repository and run the following command to install the dependencies:
 npm install
 ```
 
+### Testing
+To run the tests, use the following command:
+```bash
+npm run test
+```
+
 ## Usage
 
 ### Initialization
@@ -68,7 +74,7 @@ export enum Langs {
 
 Each of these files should contain a JSON object with key-value pairs representing the translations for that language. For example, the contents of `en-US.json` might look like this:
 
-```json
+```json5
 {
   "hello": "Hello World!",
   // You can also nest objects
