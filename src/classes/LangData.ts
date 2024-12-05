@@ -17,7 +17,7 @@ export default class LangData {
         let obj: Record<string, any>
         try {
             obj = JSON5.parse(buffer)
-        } catch (_) { return };
+        } catch (_) { return }
         if (!obj) return
 
         const keyParts: string[] = []
