@@ -69,14 +69,13 @@ export class FormattedString {
     }
 
     public isEmpty(): boolean {
-        return this.parts.length > 1 || this.parts[0] !== ''
+        return this.parts.length <= 1 && this.parts[0] === ''
     }
 
     public resolve(object: any): string {
         let result = ''
-        console.log("Test")
-        // if (this.parts.length > 1 && object === undefined)
-        //     throw new Error('An object is required to resolve the string')
+        if (this.parts.length > 1 && object === undefined)
+            throw new Error('An object is required to resolve the string')
         for (const part of this.parts) {
             if (typeof part === 'object') {
                 try {

@@ -117,6 +117,8 @@ export default class Hermes {
                 continue;
             object[lang] = Hermes.instance.translations[lang].getStrings()[key].resolve({});
         }
+        if (Object.keys(object).length === 0)
+            throw new Error(`Localized object not found for key: ${key}`);
         return object;
     }
 

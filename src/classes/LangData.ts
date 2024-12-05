@@ -38,6 +38,7 @@ export default class LangData {
 
     private async parseDir(path: string, baseKey?: string): Promise<void> {
         const files = await readdir(path)
+            .catch(() => { throw new Error(`Invalid path: ${path}`) })
 
         for (const file of files) {
             const filePath = `${path}/${file}`
