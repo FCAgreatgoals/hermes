@@ -1,6 +1,7 @@
 import { readFile, readdir, stat } from "fs/promises";
 import { Langs } from "../types/Langs";
 import { FormattedString } from "./format/FormattedString";
+import JSON5 from 'json5'
 
 export default class LangData {
     public readonly lang: Langs
@@ -15,7 +16,7 @@ export default class LangData {
         const buffer = await readFile(path, 'utf8')
         let obj: Record<string, any>
         try {
-            obj = JSON.parse(buffer)
+            obj = JSON5.parse(buffer)
         } catch (_) { return };
         if (!obj) return
 
@@ -46,14 +47,15 @@ export default class LangData {
             if (stats.isDirectory())
                 await this.parseDir(filePath,
                     baseKey
-                        ? `${baseKey}.${file.replace('.json', '')}`
-                        : file.replace(/\.json$/, '')
+                        ? `${baseKey}.${file.replace(/\.(json|json5)$/, '')}`
+                        : file.replace(/\.(json|json5)$/, '')
                     );
-            else if (file.endsWith('.json'))
-                await this.parseFile(filePath, baseKey
-                            ? `${baseKey}.${file.replace('.json', '')}`
-                            : file.replace(/\.json$/, '')
-                        );
+            else if (file.endsWith('.json') || file.endsWith('.json5'))
+                await this.parseFile(filePath,
+                    baseKey
+                        ? `${baseKey}.${file.replace(/\.(json|json5)$/, '')}`
+                        : file.replace(/\.(json|json5)$/, '')
+                    );
         }
     }
 
@@ -63,7 +65,7 @@ export default class LangData {
 
         const instance = new LangData(lang)
 
-        if (path.endsWith('.json'))
+        if (path.endsWith('.json') || path.endsWith('.json5'))
             await instance.parseFile(path);
         else await instance.parseDir(path);
 

@@ -10,7 +10,8 @@
   "license": "ISC",
   "description": "A simple and lightweight i18n library for Node.js",
   "dependencies": {
-    "@types/node": "^22.10.1"
+    "@types/node": "^22.10.1",
+    "json5": "^2.2.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.0",
