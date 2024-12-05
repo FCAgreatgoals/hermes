@@ -1,0 +1,4 @@
+{
+    "world": "Hello World", // This is a comment after a trailing comma.
+    /* This is a block comment. */
+}
