@@ -1,0 +1,15 @@
+{
+    "hello": {
+        "world": "Bonjour le monde"
+    },
+    "test": {
+        "nested": {
+            "key": "Valeur de la clé"
+        }
+    },
+    "double": {
+        "nested": {
+            "key": "Valeur de la clé"
+        }
+    }
+}
