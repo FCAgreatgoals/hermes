@@ -18,7 +18,6 @@ export default class LangData {
         try {
             obj = JSON5.parse(buffer)
         } catch (_) { return }
-        if (!obj) return
 
         const keyParts: string[] = []
         if (baseKey) keyParts.push(baseKey)

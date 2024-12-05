@@ -36,7 +36,7 @@ export type HermesInitOptions =  Partial<{
 
 export default class Hermes {
     private constructor(options: HermesInitOptions) {
-        this.options = options || {}
+        this.options = options
     }
     private static instance: Hermes
     private translations: Record<Langs, LangData> = {} as Record<Langs, LangData>
@@ -141,8 +141,6 @@ export default class Hermes {
         const missingTranslationsCount = langs.reduce((acc, lang) => acc + missingTranslations[lang].length, 0);
         if (missingTranslationsCount === 0)
             return;
-        if (this.options.noMissingTranslations === 'ignore')
-            return;
         const logLevel = getLogLevel(this.options.noMissingTranslations!);
         logLevel('[i18n] Missing translations:');
         for (const lang of langs) {
@@ -171,8 +169,6 @@ export default class Hermes {
 
         const emptyTranslationsCount = langs.reduce((acc, lang) => acc + emptyTranslations[lang].length, 0);
         if (emptyTranslationsCount === 0)
-            return;
-        if (this.options.noEmptyTranslations === 'ignore')
             return;
         const logLevel = getLogLevel(this.options.noEmptyTranslations!);
         logLevel('[i18n] Empty translations:');

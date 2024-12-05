@@ -19,4 +19,9 @@ describe('LangData_Init_Test', () => {
         expect(async () => await LangData.create('en-US', './translations/en-US/invalid')).rejects.toThrow()
     });
 
+    test('broken_json', async () => {
+        // @ts-ignore
+        expect(await LangData.create('en-US', './tests/broken.json')).toBeDefined()
+    });
+
 });

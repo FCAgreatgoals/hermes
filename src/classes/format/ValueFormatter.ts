@@ -10,7 +10,6 @@ export default class ValueFormatter {
         if (this.key in object)
             return object[this.key]
         throw new Error(`Missing key "${this.key}"`)
-        return ''
     }
 
 }

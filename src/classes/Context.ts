@@ -29,7 +29,7 @@ export default class Context {
         const value = this.data.getStrings()[(this.basePath !== '') ? `${this.basePath}.${key}`: key]
         if (!value)
             throw new Error(`Translation not found for key: ${(this.basePath !== '') ? `${this.basePath}.${key}` : key} in lang: ${this.data.lang}`)
-        return this.data.getStrings()[(this.basePath !== '') ? `${this.basePath}.${key}`: key].resolve(object)
+        return value.resolve(object)
     }
 
 }

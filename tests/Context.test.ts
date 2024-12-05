@@ -27,4 +27,20 @@ describe('Context_Init_Test', () => {
         expect(() => ctx.t('hello.test')).toThrow()
     })
 
+    test('context_with_basepath', async () => {
+        // @ts-ignore
+        const data = await LangData.create('en-US', './translations/en-US')
+
+        const ctx = Context.create(data, 'hello')
+        expect(ctx.t('world')).toBeDefined()
+    })
+
+    test('context_with_basepath_invalid', async () => {
+        // @ts-ignore
+        const data = await LangData.create('en-US', './translations/en-US')
+
+        const ctx = Context.create(data, 'hello')
+        expect(() => ctx.t('test')).toThrow()
+    });
+
 });

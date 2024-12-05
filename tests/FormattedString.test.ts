@@ -36,4 +36,16 @@ describe('FormattedString_Init_Test', () => {
         expect(() => FormattedString.create('Hello %name')).toThrow()
     });
 
+    test('invalid_expression', () => {
+        expect(() => FormattedString.create('Hello %name:invalid%')).toThrow()
+    })
+
+    test('unimplemented_expression', () => {
+        expect(FormattedString.create('Hello %name:invalid(data)%').resolve({})).toEqual('Hello [DEFAULT FORMATTER]')
+    })
+
+    test('required_not_provided', () => {
+        expect(() => FormattedString.create('Hello %name%').resolve(undefined)).toThrow()
+    })
+
 });

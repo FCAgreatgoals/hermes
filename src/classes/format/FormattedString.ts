@@ -47,7 +47,7 @@ export class FormattedString {
     }
 
     private static parseExpression(expression: string): StringFormatter {
-        const data = expression.match(/(\w+)(?::(\w+)\((.+)\))?/)
+        const data = expression.match(/^(\w+)(?::(\w+)\((.+)\))?$/)
         if (!data)
             throw new Error(`Invalid expression: ${expression}`)
         if (!data[2]) {
@@ -69,7 +69,7 @@ export class FormattedString {
     }
 
     public isEmpty(): boolean {
-        return this.parts.length <= 1 && this.parts[0] === ''
+        return (this.parts.length <= 1 && (this.parts[0] === undefined || this.parts[0] === ''))
     }
 
     public resolve(object: any): string {
