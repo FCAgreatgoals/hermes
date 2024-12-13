@@ -31,7 +31,8 @@ export type WarnStrategy = 'throw' | 'warn' | 'ignore';
 export type HermesInitOptions =  Partial<{
     translationDir: string,
     noMissingTranslations: WarnStrategy,
-    noEmptyTranslations: WarnStrategy
+    noEmptyTranslations: WarnStrategy,
+    fallbackLang: LangsKeys
 }>
 
 export default class Hermes {
@@ -94,8 +95,13 @@ export default class Hermes {
     public static getContext(lang: LangsKeys, basePath: string = '') {
         if (!Hermes.instance)
             throw new Error('I18n not initialized');
-        if (!Hermes.instance.translations[lang])
-            throw new Error(`Translation not found for lang: ${lang}`);
+        if (!Hermes.instance.translations[lang]) {
+            if (!Hermes.instance.options.fallbackLang)
+                throw new Error(`Language not found: ${lang}`);
+            if (!Hermes.instance.translations[Hermes.instance.options.fallbackLang])
+                throw new Error(`Fallback language not found: ${Hermes.instance.options.fallbackLang}`);
+            return Context.create(Hermes.instance.translations[Hermes.instance.options.fallbackLang], basePath);
+        }
         return Context.create(Hermes.instance.translations[lang], basePath);
     }
 
