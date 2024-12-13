@@ -93,6 +93,7 @@ To initialize Hermes, you will need to import the `Hermes` class and call the `i
 - `translationsDir`: The path to the directory containing your translation files. Defaults to `./translations`.
 - `noMissingTranslations`: Can be set to `warn`, `throw`, or `ignore`. Defaults to `warn`.
 - `noEmptyTranslations`: Can be set to `warn`, `throw`, or `ignore`. Defaults to `warn`.
+- `fallbackLanguage`: The language to use as a fallback if a language code is not found. **Does not have a default value.**
 
 ```typescript
 import { Hermes } from 'hermes-i18n';
