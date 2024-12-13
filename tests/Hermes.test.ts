@@ -106,4 +106,26 @@ describe('Hermes_Init_Test', () => {
         })).rejects.toThrow();
     })
 
+    test('fallback_not_defined', async () => {
+        expect(() => Hermes.getContext('id')).toThrow() // should throw because fallback is not defined
+    })
+
+    test('fallback_defined', async () => {
+        // @ts-ignore
+        Hermes.instance = undefined;
+        await Hermes.init({
+            fallbackLang: 'en-GB'
+        })
+        expect(Hermes.getContext('id')).toBeDefined()
+    })
+
+    test('fallback_defined_invalid', async () => {
+        // @ts-ignore
+        Hermes.instance = undefined;
+        await Hermes.init({
+            fallbackLang: 'id'
+        })
+        expect(() => Hermes.getContext('it')).toThrow()
+    })
+
 });
