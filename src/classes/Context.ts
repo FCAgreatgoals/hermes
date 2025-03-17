@@ -15,7 +15,7 @@ export default class Context {
     }
 
     /**
-     * @method t
+     * @method translate
      * @description Translate a key to the current language with optional object to replace placeholders
      *
      * @throws if translation not found
@@ -25,11 +25,13 @@ export default class Context {
      * @param object
      * @returns string
      */
-    public t(key: string, object?: any):string {
+    public translate(key: string, object?: any):string {
         const value = this.data.getStrings()[(this.basePath !== '') ? `${this.basePath}.${key}`: key]
         if (!value)
             throw new Error(`Translation not found for key: ${(this.basePath !== '') ? `${this.basePath}.${key}` : key} in lang: ${this.data.lang}`)
         return value.resolve(object)
     }
+
+    public t = this.translate
 
 }
