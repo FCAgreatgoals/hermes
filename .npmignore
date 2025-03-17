@@ -1,2 +1,8 @@
 node_modules/
 examples/
+src/
+tests/
+translations/
+tsconfig.json
+jest.config.ts
+.github

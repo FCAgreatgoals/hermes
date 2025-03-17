@@ -6,7 +6,7 @@ Hermes is a lightweight and simple to use package for managing i18n strings for 
 
 To install Hermes with npm, run:
 ```bash
-npm install hermes-i18n
+npm install @fca.gg/hermes
 ```
 
 ### Local usage
@@ -96,7 +96,7 @@ To initialize Hermes, you will need to import the `Hermes` class and call the `i
 - `fallbackLanguage`: The language to use as a fallback if a language code is not found. **Does not have a default value.**
 
 ```typescript
-import { Hermes } from 'hermes-i18n';
+import { Hermes } from '@fca.gg/hermes';
 
 async function main() {
     await Hermes.init()
@@ -108,7 +108,7 @@ main()
 ### Context
 In order to get a translation, you need to fetch the specific context of a language. For example, if you want to get the translation for the `greeting` key in the `en-US` context, you would do the following:
 ```typescript
-import { Hermes } from 'hermes-i18n';
+import Hermes from '@fca.gg/hermes';
 
 const ctx = Hermes.getContext('en-US');
 ctx.t('hello'); // returns "Hello World!"
@@ -134,7 +134,7 @@ For example, you might have the following translation:
 
 You can then pass an object with the variables you want to replace in the `t` method:
 ```typescript
-import { Hermes } from 'hermes-i18n';
+import Hermes from '@fca.gg/hermes';
 
 const ctx = Hermes.getContext('en-US');
 ctx.t('greeting', { name: 'Alice' }); // returns "Hello, Alice!"
@@ -163,7 +163,7 @@ You can extend the functionality of variables by using expressions. A conditiona
 ## Scope
 You can also define a scope for your translations by specifying it in the `getContext()` method. This allows you to group your translations by a specific context, such as a module or component name. For example:
 ```typescript
-import { Hermes } from 'hermes-i18n';
+import Hermes from '@fca.gg/hermes';
 
 const ctx = Hermes.getContext('en-US', 'nested');
 ctx.t('key'); // returns "This is a nested key"
@@ -172,7 +172,7 @@ ctx.t('key'); // returns "This is a nested key"
 ### Missing and Empty Translations
 Hermes provides options for handling missing and empty translations. By default, Hermes will log a warning if a translation is missing or empty. You can change this behavior by setting the `noMissingTranslations` and `noEmptyTranslations` options in the `init()` method. For example:
 ```typescript
-import { Hermes } from 'hermes-i18n';
+import Hermes from '@fca.gg/hermes';
 
 async function main() {
     await Hermes.init({
@@ -200,7 +200,7 @@ translations/
 
 In this case, you can access keys in the nested files by using dot notation:
 ```typescript
-import { Hermes } from 'hermes-i18n';
+import Hermes from '@fca.gg/hermes';
 
 const ctx = Hermes.getContext('en-GB');
 ctx.t('common.key'); // returns the value of the key in common.json
@@ -210,7 +210,7 @@ ctx.t('features.feature1.key'); // returns the value of the key in feature1.json
 ### Localized Objects
 You can also get an object composed of all the translations for a specific key in all languages by using the `getLocalizedObject()` method. For example:
 ```typescript
-import { Hermes } from 'hermes-i18n';
+import Hermes from '@fca.gg/hermes';
 
 // This is only a definition of the LocalizedObject type
 type LocalizedObject = Partial<
@@ -223,4 +223,3 @@ const obj = Hermes.getLocalizedObject('key');
 
 ## License
 This project is licensed under the ISC License - see the [LICENSE.md](LICENSE.md) file for details.
-
