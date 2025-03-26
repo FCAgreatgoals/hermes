@@ -48,4 +48,24 @@ describe('FormattedString_Init_Test', () => {
         expect(() => FormattedString.create('Hello %name%').resolve(undefined)).toThrow()
     })
 
+    test('escaped_percent_both', () => {
+        expect(FormattedString.create('Hello \\%name\\%').resolve({})).toEqual('Hello %name%')
+    })
+
+    test('escaped_percent_start', () => {
+        expect(() => FormattedString.create('Hello \\%name%').resolve({})).toThrow()
+    })
+
+    test('escaped_percent_end', () => {
+        expect(() => FormattedString.create('Hello %name\\%').resolve({})).toThrow()
+    })
+
+    test('regular_sentence_with_percent', () => {
+        expect(FormattedString.create('There is 100\\% coverage!').resolve({})).toEqual('There is 100% coverage!')
+    })
+
+    test('escaped_percent_inside_expression', () => {
+        expect(FormattedString.create('Hello %name:if(100\\%)%').resolve({name: true})).toEqual('Hello 100%')
+    })
+
 });

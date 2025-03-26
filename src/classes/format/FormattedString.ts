@@ -33,7 +33,17 @@ export class FormattedString {
                 break
             }
             parts.push(string.substring(index, start))
-            const end = string.indexOf('%', start + 1)
+            if (string[start - 1] === '\\') {
+                parts[parts.length - 1] = (<string>parts[parts.length - 1]).slice(0, -1)
+                parts.push('%')
+                index = start + 1
+                continue
+            }
+            let end = string.indexOf('%', start + 1)
+            while (end !== -1 && string[end - 1] === '\\') {
+                string = string.slice(0, end - 1) + string.slice(end)
+                end = string.indexOf('%', end + 1)
+            }
             if (end === -1) {
                 parts.push(string.substring(start))
                 throw new Error('No closing marker found')

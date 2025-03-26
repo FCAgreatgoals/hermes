@@ -1,5 +1,7 @@
 node_modules/
 examples/
-dist/
+lib/
 coverage/
 .vscode/
+.idea/
+**/.DS_Store
