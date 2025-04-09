@@ -3,7 +3,7 @@
   "version": "1.1.4",
   "description": "A simple and lightweight i18n library for Node.js",
   "author": "FCA <development@fca.gg>",
-  "license": "ISC",
+  "license": "AGPL-3.0",
   "keywords": [
     "i18n",
     "internationalization",
