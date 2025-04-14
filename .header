@@ -16,19 +16,3 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
-export default class ValueFormatter {
-
-    private readonly key: string
-
-    constructor(key: string) {
-        this.key = key
-    }
-
-    public resolve(object: any): string {
-        if (this.key in object)
-            return object[this.key]
-        throw new Error(`Missing key "${this.key}"`)
-    }
-
-}

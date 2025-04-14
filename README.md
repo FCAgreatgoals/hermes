@@ -6,7 +6,7 @@ Hermes is a lightweight and simple to use package for managing i18n strings for 
 
 To install Hermes with npm, run:
 ```bash
-npm install @fca.gg/hermes
+npm install "@fca.gg/hermes"
 ```
 
 ### Local usage
@@ -222,4 +222,7 @@ const obj = Hermes.getLocalizedObject('key');
 ```
 
 ## License
-This project is licensed under the ISC License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the AGPL v3 License - see the [LICENSE](LICENSE) file for details.
+
+> We chose the AGPL to ensure that Hermes remains truly open source and contributive.
+If you use or adapt Hermes, even over a network, you must share your modifications. That’s the spirit of the project — building useful tools together, in the open.
