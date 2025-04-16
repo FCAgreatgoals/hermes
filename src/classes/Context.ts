@@ -23,14 +23,16 @@ export default class Context {
 
     private readonly data: LangData
     private readonly basePath: string
+    private readonly fallbackData?: LangData
 
-    public static create(data: LangData, basePath: string = '') {
-        return new Context(data, basePath)
+    public static create(data: LangData, basePath: string = '', fallbackData?: LangData) {
+        return new Context(data, basePath, fallbackData)
     }
 
-    private constructor(data: LangData, basePath: string) {
+    private constructor(data: LangData, basePath: string, fallbackData?: LangData) {
         this.data = data
         this.basePath = basePath
+        this.fallbackData = fallbackData
     }
 
     /**
@@ -45,12 +47,27 @@ export default class Context {
      * @returns string
      */
     public translate(key: string, object?: any):string {
-        const value = this.data.getStrings()[(this.basePath !== '') ? `${this.basePath}.${key}`: key]
-        if (!value)
-            throw new Error(`Translation not found for key: ${(this.basePath !== '') ? `${this.basePath}.${key}` : key} in lang: ${this.data.lang}`)
-        return value.resolve(object)
+        const fullKey = this.basePath ? `${this.basePath}.${key}` : key
+        const value = this.data.getStrings()[fullKey]
+
+        if (value)
+            return value.resolve(object)
+
+        if (this.fallbackData) {
+            const fallbackValue = this.fallbackData.getStrings()[fullKey]
+
+            if (fallbackValue)
+                return fallbackValue.resolve(object)
+        }
+
+        throw new Error(`Translation not found for key: ${fullKey} in lang: ${this.data.lang}`)
     }
 
-    public t = this.translate
+    /**
+     * {@link translate} alias
+     */
+    public t(key: string, object?: any): string {
+        return this.translate(key, object)
+    }
 
 }
