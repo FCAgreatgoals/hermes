@@ -114,14 +114,20 @@ export default class Hermes {
     public static getContext(lang: LangsKeys, basePath: string = '') {
         if (!Hermes.instance)
             throw new Error('I18n not initialized');
-        if (!Hermes.instance.translations[lang]) {
-            if (!Hermes.instance.options.fallbackLang)
+
+        const langData = Hermes.instance.translations[lang]
+
+        const fallbackLang = Hermes.instance.options.fallbackLang
+        const fallbackData = fallbackLang ? Hermes.instance.translations[fallbackLang] : undefined
+
+        if (!langData) {
+            if (!fallbackLang)
                 throw new Error(`Language not found: ${lang}`);
-            if (!Hermes.instance.translations[Hermes.instance.options.fallbackLang])
-                throw new Error(`Fallback language not found: ${Hermes.instance.options.fallbackLang}`);
-            return Context.create(Hermes.instance.translations[Hermes.instance.options.fallbackLang], basePath);
+            if (!fallbackData)
+                throw new Error(`Fallback language not found: ${fallbackLang}`);
         }
-        return Context.create(Hermes.instance.translations[lang], basePath);
+
+        return Context.create(langData ?? fallbackData, basePath, langData ? fallbackData : undefined)
     }
 
     /**
