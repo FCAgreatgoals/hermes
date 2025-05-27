@@ -47,7 +47,7 @@ export type WarnStrategy = 'throw' | 'warn' | 'ignore';
  * @property {WarnStrategy} noMissingTranslations - Strategy for missing translations (throw, warn, ignore)
  * @property {WarnStrategy} noEmptyTranslations - Strategy for empty translations (throw, warn, ignore)
  */
-export type HermesInitOptions =  Partial<{
+export type HermesInitOptions = Partial<{
     translationDir: string,
     noMissingTranslations: WarnStrategy,
     noEmptyTranslations: WarnStrategy,
@@ -75,12 +75,14 @@ export default class Hermes {
     }) {
         if (Hermes.instance)
             throw new Error('I18n already initialized');
+
         if (!options.translationDir)
             options.translationDir = './translations';
         if (!options.noMissingTranslations)
             options.noMissingTranslations = 'warn';
         if (!options.noEmptyTranslations)
             options.noEmptyTranslations = 'warn';
+
         Hermes.instance = new Hermes(options);
 
         const dir = options?.translationDir;
@@ -90,6 +92,7 @@ export default class Hermes {
             const lang = file.replace('.json', '') as Langs;
             if (!Object.values(Langs).includes(lang))
                 continue;
+
             Hermes.instance.translations[lang] = await LangData.create(lang, `${dir}/${file}`);
         }
 
@@ -140,6 +143,7 @@ export default class Hermes {
     public static getLocalizedObject(key: string): LocalizedObject {
         if (!Hermes.instance)
             throw new Error('I18n not initialized');
+
         const object: LocalizedObject = {};
         const langs = Object.keys(Hermes.instance.translations) as Langs[];
 
@@ -148,70 +152,94 @@ export default class Hermes {
                 continue;
             object[lang] = Hermes.instance.translations[lang].getStrings()[key].resolve({});
         }
+
         if (Object.keys(object).length === 0)
             throw new Error(`Localized object not found for key: ${key}`);
+
         return object;
     }
 
     private checkTranslations() {
         const langs = Object.keys(this.translations) as Langs[];
 
-        const missingTranslations: Record<Langs, string[]> = {} as Record<Langs, string[]>;
+        const missingTranslations: Record<Langs, Set<string>> = {} as Record<Langs, Set<string>>;
+
         for (const lang of langs) {
-            missingTranslations[lang] = [];
-            for (const [key] of Object.entries(this.translations[lang].getStrings())) {
+            if (!missingTranslations[lang])
+                missingTranslations[lang] = new Set<string>();
+
+            for (const key of Object.keys(this.translations[lang].getStrings())) {
                 for (const lang2 of langs) {
                     if (lang === lang2)
                         continue;
-                    if (!this.translations[lang2].getStrings()[key])
-                        missingTranslations[lang2].push(key);
+
+                    if (!this.translations[lang2].getStrings()[key]) {
+                        if (!missingTranslations[lang2])
+                            missingTranslations[lang2] = new Set<string>();
+
+                        missingTranslations[lang2].add(key);
+                    }
                 }
             }
         }
 
-        const missingTranslationsCount = langs.reduce((acc, lang) => acc + missingTranslations[lang].length, 0);
+        const missingTranslationsCount = langs.reduce((acc, lang) => acc + missingTranslations[lang].size, 0);
         if (missingTranslationsCount === 0)
             return;
+
         const logLevel = getLogLevel(this.options.noMissingTranslations!);
         logLevel('[i18n] Missing translations:');
+
         for (const lang of langs) {
-            if (missingTranslations[lang].length === 0)
+            if (missingTranslations[lang].size === 0)
                 continue;
-            logLevel(`- ${lang}: ${missingTranslations[lang].length} missing translations:`);
+
+            logLevel(`- ${lang}: ${missingTranslations[lang].size} missing translations:`);
+
             for (const key of missingTranslations[lang])
                 logLevel(`  - ${key}`);
         }
+
         if (this.options.noMissingTranslations === 'throw')
             throw new Error('Missing translations');
+
         return;
     }
 
     private checkEmptyTranslations() {
         const langs = Object.keys(this.translations) as Langs[];
 
-        const emptyTranslations: Record<Langs, string[]> = {} as Record<Langs, string[]>;
+        const emptyTranslations: Record<Langs, Set<string>> = {} as Record<Langs, Set<string>>;
+
         for (const lang of langs) {
-            emptyTranslations[lang] = [];
+            emptyTranslations[lang] = new Set<string>();
+
             for (const [key, value] of Object.entries(this.translations[lang].getStrings())) {
                 if (value.isEmpty())
-                    emptyTranslations[lang].push(key);
+                    emptyTranslations[lang].add(key);
             }
         }
 
-        const emptyTranslationsCount = langs.reduce((acc, lang) => acc + emptyTranslations[lang].length, 0);
+        const emptyTranslationsCount = langs.reduce((acc, lang) => acc + emptyTranslations[lang].size, 0);
         if (emptyTranslationsCount === 0)
             return;
+
         const logLevel = getLogLevel(this.options.noEmptyTranslations!);
         logLevel('[i18n] Empty translations:');
+
         for (const lang of langs) {
-            if (emptyTranslations[lang].length === 0)
+            if (emptyTranslations[lang].size === 0)
                 continue;
-            logLevel(`- ${lang}: ${emptyTranslations[lang].length} empty translations:`);
+
+            logLevel(`- ${lang}: ${emptyTranslations[lang].size} empty translations:`);
+
             for (const key of emptyTranslations[lang])
                 logLevel(`  - ${key}`);
         }
+
         if (this.options.noEmptyTranslations === 'throw')
             throw new Error('Empty translations');
+
         return;
     }
 

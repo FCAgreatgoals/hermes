@@ -46,7 +46,7 @@ export default class Context {
      * @param object
      * @returns string
      */
-    public translate(key: string, object?: any):string {
+    public translate(key: string, object?: any): string {
         const fullKey = this.basePath ? `${this.basePath}.${key}` : key
         const value = this.data.getStrings()[fullKey]
 
