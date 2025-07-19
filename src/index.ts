@@ -17,10 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import Hermes from './classes/Hermes'
-import type Context from './classes/Context'
+import Hermes from './classes/Hermes.js'
+import type Context from './classes/Context.js'
 
-export * from './types/Langs'
+export * from './types/Langs.js'
 export { Hermes, Context }
 
 export default Hermes

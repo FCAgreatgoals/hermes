@@ -17,22 +17,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import LangData from "./LangData";
+import LangData from "./LangData.js";
 
 export default class Context {
 
     private readonly data: LangData
     private readonly basePath: string
-    private readonly fallbackData?: LangData
 
-    public static create(data: LangData, basePath: string = '', fallbackData?: LangData) {
-        return new Context(data, basePath, fallbackData)
+    public static create(data: LangData, basePath: string = '') {
+        return new Context(data, basePath)
     }
 
-    private constructor(data: LangData, basePath: string, fallbackData?: LangData) {
+    private constructor(data: LangData, basePath: string) {
         this.data = data
         this.basePath = basePath
-        this.fallbackData = fallbackData
     }
 
     /**
@@ -52,13 +50,6 @@ export default class Context {
 
         if (value)
             return value.resolve(object)
-
-        if (this.fallbackData) {
-            const fallbackValue = this.fallbackData.getStrings()[fullKey]
-
-            if (fallbackValue)
-                return fallbackValue.resolve(object)
-        }
 
         throw new Error(`Translation not found for key: ${fullKey} in lang: ${this.data.lang}`)
     }

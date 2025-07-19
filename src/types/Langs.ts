@@ -24,6 +24,7 @@ export enum Langs {
 	ENGLISH_UK = 'en-GB',
 	ENGLISH_US = 'en-US',
 	SPANISH = 'es-ES',
+	SPANISH_LATAM = 'es-419',
 	FRENCH = 'fr',
 	CROATIAN = 'hr',
 	ITALIAN = 'it',
@@ -48,6 +49,7 @@ export enum Langs {
 	CHINESE_CHINA = 'zh-CN',
 	JAPANESE = 'ja',
 	CHINESE_TAIWAN = 'zh-TW',
+	KOREAN = 'ko'
 }
 
 export type LangsKeys = `${Langs}`

@@ -12,6 +12,9 @@
     "discord",
     "interactions"
   ],
+  "bin": {
+    "hermes": "bin/hermes.js"
+  },
   "main": "lib/index.js",
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -27,6 +30,7 @@
   },
   "dependencies": {
     "@types/node": "^22.10.1",
+    "commander": "^14.0.0",
     "json5": "^2.2.3"
   },
   "devDependencies": {
@@ -40,6 +44,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest"
-  }
+    "test": "jest",
+    "start": "node ./bin/hermes.js"
+  },
+  "type": "module"
 }
