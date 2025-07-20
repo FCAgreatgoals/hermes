@@ -31,7 +31,7 @@ export interface HermesConfig {
 export const DEFAULT_CONFIG: HermesConfig = {
 	localesDir: 'locales',
 	buildDir: '.hermes',
-	checkTranslations: false,
+	checkTranslations: true,
 	fallbackChains: {
 		/* [Langs.INDONESIAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
 		[Langs.DANISH]: [Langs.SWEDISH, Langs.NORWEGIAN],
