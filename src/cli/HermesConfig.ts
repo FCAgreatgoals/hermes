@@ -17,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { resolve } from 'path'
-import { Langs } from '../types/Langs'
-import { existsSync } from 'fs'
+import { resolve } from 'path';
+import { Langs } from '../types/Langs';
+import { existsSync } from 'fs';
 
 export interface HermesConfig {
 	localesDir: string
@@ -67,12 +67,13 @@ export const DEFAULT_CONFIG: HermesConfig = {
 		/* [Langs.KOREAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.JAPANESE], */
 		default: [Langs.ENGLISH_US, Langs.ENGLISH_UK]
 	}
-}
+};
 
 export function loadHermesConfig(): HermesConfig {
-	const configPath = resolve('hermes.config.js')
+	const configPath = resolve('hermes.config.js');
 	if (existsSync(configPath)) {
-		const config = require(configPath) as Partial<HermesConfig>
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		const config = require(configPath) as Partial<HermesConfig>;
 
 		return {
 			localesDir: config.localesDir || DEFAULT_CONFIG.localesDir,
@@ -82,7 +83,7 @@ export function loadHermesConfig(): HermesConfig {
 				...DEFAULT_CONFIG.fallbackChains,
 				...config.fallbackChains
 			}
-		}
+		};
 	}
-	return DEFAULT_CONFIG
+	return DEFAULT_CONFIG;
 }

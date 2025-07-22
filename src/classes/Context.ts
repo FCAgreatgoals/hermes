@@ -21,16 +21,16 @@ import LangData from "./LangData";
 
 export default class Context {
 
-    private readonly data: LangData
-    private readonly basePath: string
+    private readonly data: LangData;
+    private readonly basePath: string;
 
     public static create(data: LangData, basePath: string = '') {
-        return new Context(data, basePath)
+        return new Context(data, basePath);
     }
 
     private constructor(data: LangData, basePath: string) {
-        this.data = data
-        this.basePath = basePath
+        this.data = data;
+        this.basePath = basePath;
     }
 
     /**
@@ -44,21 +44,21 @@ export default class Context {
      * @param object
      * @returns string
      */
-    public translate(key: string, object?: any): string {
-        const fullKey = this.basePath ? `${this.basePath}.${key}` : key
-        const value = this.data.getStrings()[fullKey]
+    public translate(key: string, object?: unknown): string {
+        const fullKey = this.basePath ? `${this.basePath}.${key}` : key;
+        const value = this.data.getStrings()[fullKey];
 
         if (value)
-            return value.resolve(object)
+            return value.resolve(object);
 
-        throw new Error(`Translation not found for key: ${fullKey} in lang: ${this.data.lang}`)
+        throw new Error(`Translation not found for key: ${fullKey} in lang: ${this.data.lang}`);
     }
 
     /**
      * {@link translate} alias
      */
     public t(key: string, object?: any): string {
-        return this.translate(key, object)
+        return this.translate(key, object);
     }
 
 }

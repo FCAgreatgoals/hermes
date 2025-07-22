@@ -21,35 +21,35 @@ import { Langs } from "../types/Langs";
 import { FormattedString } from "./format/FormattedString";
 
 export default class LangData {
-    public readonly lang: Langs
+    public readonly lang: Langs;
 
-    private strings: Record<string, FormattedString> = {}
+    private strings: Record<string, FormattedString> = {};
 
     private constructor(lang: Langs) {
-        this.lang = lang
+        this.lang = lang;
     }
 
     public getStrings(): Record<string, FormattedString> {
-        return this.strings
+        return this.strings;
     }
 
     public static async create(lang: Langs, data: Record<string, any>): Promise<LangData> {
         if (!Object.values(Langs).includes(lang))
-            throw new Error(`Invalid lang: ${lang}`)
+            throw new Error(`Invalid lang: ${lang}`);
 
-        const instance = new LangData(lang)
+        const instance = new LangData(lang);
 
-        const keyParts: string[] = []
+        const keyParts: string[] = [];
         const parseObject = (obj: Record<string, any>) => {
             for (const [key, value] of Object.entries(obj)) {
-                keyParts.push(key)
-                if (typeof value === 'object') parseObject(value); else instance.strings[keyParts.join('.')] = FormattedString.create(value)
-                keyParts.pop()
+                keyParts.push(key);
+                if (typeof value === 'object') parseObject(value); else instance.strings[keyParts.join('.')] = FormattedString.create(value);
+                keyParts.pop();
             }
-        }
-        parseObject(data)
+        };
+        parseObject(data);
 
-        return instance
+        return instance;
     }
 
 }

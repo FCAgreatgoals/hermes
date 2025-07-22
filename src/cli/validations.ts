@@ -17,25 +17,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { existsSync, readFileSync, statSync } from 'fs'
-import { join, relative } from 'path'
-import { Langs } from '../types/Langs'
-import { HermesConfig } from './HermesConfig'
-import { flattenWithSource, readAllJsonFiles } from './utils'
+import { existsSync, readFileSync, statSync } from 'fs';
+import { join, relative } from 'path';
+import { Langs } from '../types/Langs';
+import { HermesConfig } from './HermesConfig';
+import { flattenWithSource, readAllJsonFiles } from './utils';
 
 export function validateTranslations(allTranslations: Record<Langs, Record<string, string>>) {
-	const langs = Object.keys(allTranslations) as Langs[]
+	const langs = Object.keys(allTranslations) as Langs[];
 
-	const missing: Record<Langs, Set<string>> = {} as any
-	const empty: Record<Langs, Set<string>> = {} as any
+	const missing: Record<Langs, Set<string>> = {} as any;
+	const empty: Record<Langs, Set<string>> = {} as any;
 
 	for (const lang of langs) {
-		const current = allTranslations[lang]
+		const current = allTranslations[lang];
 
 		if (!missing[lang])
-			missing[lang] = new Set<string>()
+			missing[lang] = new Set<string>();
 		if (!empty[lang])
-			empty[lang] = new Set<string>()
+			empty[lang] = new Set<string>();
 
 		for (const key of Object.keys(current)) {
 			if (
@@ -43,74 +43,74 @@ export function validateTranslations(allTranslations: Record<Langs, Record<strin
 				current[key] === null ||
 				current[key] === undefined
 			) {
-				empty[lang].add(key)
+				empty[lang].add(key);
 			}
 
 			for (const otherLang of langs) {
 				if (otherLang === lang)
-					continue
+					continue;
 
 				if (!(key in allTranslations[otherLang])) {
 					if (!missing[otherLang])
-						missing[otherLang] = new Set<string>()
+						missing[otherLang] = new Set<string>();
 
 					if (!empty[otherLang])
-						empty[otherLang] = new Set<string>()
+						empty[otherLang] = new Set<string>();
 
-					missing[otherLang].add(key)
+					missing[otherLang].add(key);
 				}
 			}
 		}
 	}
 
-	const missingCount = langs.reduce((acc, l) => acc + missing[l].size, 0)
-	const emptyCount = langs.reduce((acc, l) => acc + empty[l].size, 0)
+	const missingCount = langs.reduce((acc, l) => acc + missing[l].size, 0);
+	const emptyCount = langs.reduce((acc, l) => acc + empty[l].size, 0);
 
 	if (missingCount > 0) {
-		console.warn('[i18n] Missing translations:')
+		console.warn('[i18n] Missing translations:');
 		for (const lang of langs) {
 			if (missing[lang].size > 0) {
-				console.warn(`- ${lang}: ${missing[lang].size} missing:`)
-				for (const key of missing[lang]) console.warn(`  - ${key}`)
+				console.warn(`- ${lang}: ${missing[lang].size} missing:`);
+				for (const key of missing[lang]) console.warn(`  - ${key}`);
 			}
 		}
 	}
 
 	if (emptyCount > 0) {
-		console.warn('[i18n] Empty translations:')
+		console.warn('[i18n] Empty translations:');
 		for (const lang of langs) {
 			if (empty[lang].size > 0) {
-				console.warn(`- ${lang}: ${empty[lang].size} empty:`)
-				for (const key of empty[lang]) console.warn(`  - ${key}`)
+				console.warn(`- ${lang}: ${empty[lang].size} empty:`);
+				for (const key of empty[lang]) console.warn(`  - ${key}`);
 			}
 		}
 	}
 }
 
 export function loadTranslationsRaw(locale: string, config: HermesConfig): Record<string, string> {
-	const filePath = join(config.localesDir, `${locale}.json`)
-	const dirPath = join(config.localesDir, locale)
+	const filePath = join(config.localesDir, `${locale}.json`);
+	const dirPath = join(config.localesDir, locale);
 
-	let merged: Record<string, string> = {}
+	let merged: Record<string, string> = {};
 
 	if (existsSync(filePath)) {
-		const content = JSON.parse(readFileSync(filePath, 'utf-8'))
-		const flat = flattenWithSource(content)
-		merged = { ...merged, ...flat }
+		const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+		const flat = flattenWithSource(content);
+		merged = { ...merged, ...flat };
 	}
 
 	if (existsSync(dirPath) && statSync(dirPath).isDirectory()) {
-		const jsonFiles = readAllJsonFiles(dirPath)
+		const jsonFiles = readAllJsonFiles(dirPath);
 
 		for (const fullPath of jsonFiles) {
 			const relativePath = relative(dirPath, fullPath)
 				.replace(/\.json$/, '')
-				.replace(/\\/g, '/')
-			const content = JSON.parse(readFileSync(fullPath, 'utf-8'))
-			const namespaced = flattenWithSource(content, '', relativePath)
-			merged = { ...merged, ...namespaced }
+				.replace(/\\/g, '/');
+			const content = JSON.parse(readFileSync(fullPath, 'utf-8'));
+			const namespaced = flattenWithSource(content, '', relativePath);
+			merged = { ...merged, ...namespaced };
 		}
 	}
 
-	return merged
+	return merged;
 }

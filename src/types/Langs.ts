@@ -52,4 +52,4 @@ export enum Langs {
 	KOREAN = 'ko'
 }
 
-export type LangsKeys = `${Langs}`
+export type LangsKeys = `${Langs}`;

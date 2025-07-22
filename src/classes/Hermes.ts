@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Langs, LangsKeys } from '../types/Langs'
-import LangData from './LangData'
+import { Langs, LangsKeys } from '../types/Langs';
+import LangData from './LangData';
 import Context from './Context';
 import { LocalizedObject } from '../types/LocalizedObject';
 import { readFileSync } from 'fs';
@@ -39,15 +39,15 @@ export type WarnStrategy = 'throw' | 'warn' | 'ignore';
  */
 export type HermesInitOptions = Partial<{
     translationDir: string
-}>
+}>;
 
 export default class Hermes {
     private constructor(options: HermesInitOptions) {
-        this.options = options
+        this.options = options;
     }
-    private static instance: Hermes
-    private translations: Record<Langs, LangData> = {} as Record<Langs, LangData>
-    private readonly options: HermesInitOptions = {}
+    private static instance: Hermes;
+    private translations: Record<Langs, LangData> = {} as Record<Langs, LangData>;
+    private readonly options: HermesInitOptions = {};
 
     /**
      * @method init
@@ -87,13 +87,13 @@ export default class Hermes {
         if (!Hermes.instance)
             throw new Error('I18n not initialized');
 
-        const langData = Hermes.instance.translations[lang]
+        const langData = Hermes.instance.translations[lang];
 
         if (!langData) {
             throw new Error(`Language not found: ${lang}`);
         }
 
-        return Context.create(langData, basePath)
+        return Context.create(langData, basePath);
     }
 
     /**
