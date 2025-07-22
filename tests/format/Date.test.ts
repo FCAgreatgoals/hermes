@@ -12,7 +12,7 @@ describe('Date', () => {
         expect(new DateFormatter('key', 'YYYY-MM-DD').resolve({ key: date })).toEqual('2021-01-01');
         expect(new DateFormatter('key', 'YY-MM-DD hh:mm:ss').resolve({ key: date })).toEqual('21-01-01 00:00:00');
         expect(new DateFormatter('key', 'no date').resolve({ key: date })).toEqual('no date');
-    })
+    });
 
     test('resolve_missing', () => {
         const formatter = new DateFormatter('key', 'YY-MM-DD');

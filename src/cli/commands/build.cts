@@ -17,47 +17,47 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Command } from 'commander'
-import { loadHermesConfig } from '../HermesConfig'
-import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { Command } from 'commander';
+import { loadHermesConfig } from '../HermesConfig';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
+import { join } from 'path';
 
-import { collectLocales, loadTranslations } from '../utils'
-import { loadTranslationsRaw, validateTranslations } from '../validations'
+import { collectLocales, loadTranslations } from '../utils';
+import { loadTranslationsRaw, validateTranslations } from '../validations';
 
  export function registerBuildCommand(program: Command) {
 	program
 		.command('build')
 		.description('Builds merged flat translation files per language with fallback support')
-		.action(() => {
-			const config = loadHermesConfig()
+		.action(async () => {
+			const config = await loadHermesConfig();
 
 			if (existsSync(config.buildDir)) {
-				rmSync(config.buildDir, { recursive: true })
+				rmSync(config.buildDir, { recursive: true });
 			}
 
-			mkdirSync(config.buildDir, { recursive: true })
+			mkdirSync(config.buildDir, { recursive: true });
 
-			const locales = collectLocales(config)
+			const locales = collectLocales(config);
 
 			if (config.checkTranslations) {
-				const rawTranslations: Record<string, any> = {} as any
+				const rawTranslations: Record<string, any> = {} as any;
 
 				for (const locale of locales) {
-					rawTranslations[locale] = loadTranslationsRaw(locale, config)
+					rawTranslations[locale] = loadTranslationsRaw(locale, config);
 				}
 
-				validateTranslations(rawTranslations)
+				validateTranslations(rawTranslations);
 			}
 
-			const translations: Record<string, any> = {}
+			const translations: Record<string, any> = {};
 
 			for (const locale of locales) {
-				translations[locale] = loadTranslations(locale, config)
+				translations[locale] = loadTranslations(locale, config);
 			}
 
-			writeFileSync(join(config.buildDir, 'translations.json'), JSON.stringify(translations))
+			writeFileSync(join(config.buildDir, 'translations.json'), JSON.stringify(translations));
 
-			console.log(`✅ Built ${locales.join(', ')}`)
-		})
+			console.log(`✅ Built ${locales.join(', ')}`);
+		});
 }

@@ -13,7 +13,7 @@
     "interactions"
   ],
   "bin": {
-    "hermes": "bin/hermes.js"
+    "hermes": "lib/cli/bin/hermes.js"
   },
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -49,7 +49,7 @@
   "scripts": {
     "build": "tsc",
     "test": "npm run build && jest",
-    "start": "node ./bin/hermes.js"
+    "start": "node ./lib/cli/bin/hermes.js"
   },
   "type": "module"
 }

@@ -18,7 +18,7 @@
  */
 
 import { resolve } from 'path';
-import { Langs } from '../types/Langs';
+import { Langs } from '../types/Langs.js';
 import { existsSync } from 'fs';
 
 export interface HermesConfig {
@@ -69,11 +69,10 @@ export const DEFAULT_CONFIG: HermesConfig = {
 	}
 };
 
-export function loadHermesConfig(): HermesConfig {
+export async function loadHermesConfig(): Promise<HermesConfig> {
 	const configPath = resolve('hermes.config.js');
 	if (existsSync(configPath)) {
-		// eslint-disable-next-line @typescript-eslint/no-require-imports
-		const config = require(configPath) as Partial<HermesConfig>;
+		const config = (await import(configPath)).default as Partial<HermesConfig>;
 
 		return {
 			localesDir: config.localesDir || DEFAULT_CONFIG.localesDir,

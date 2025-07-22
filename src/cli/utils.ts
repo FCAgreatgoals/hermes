@@ -17,13 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { existsSync, readdirSync, readFileSync, statSync } from 'fs'
-import { HermesConfig } from './HermesConfig'
-import { join, relative } from 'path'
-import { Langs } from '../types/Langs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
+import { HermesConfig } from './HermesConfig';
+import { join, relative } from 'path';
+import { Langs } from '../types/Langs.js';
 
 export function flattenWithSource(obj: Record<string, any>, prefix = '', source = ''): Record<string, string> {
-	let result: Record<string, string> = {}
+	let result: Record<string, string> = {};
 
 	for (const key in obj) {
 		const value = obj[key];
@@ -44,8 +44,8 @@ export function flattenWithSource(obj: Record<string, any>, prefix = '', source 
 }
 
 export function collectLocales(config: HermesConfig): string[] {
-	const entries = readdirSync(config.localesDir)
-	const files: string[] = []
+	const entries = readdirSync(config.localesDir);
+	const files: string[] = [];
 
 	for (const entry of entries) {
 		const lang = entry.replace(/\.json$/, '');

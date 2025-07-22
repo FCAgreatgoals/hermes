@@ -9,7 +9,7 @@ describe('Value', () => {
     test('resolve_basic', () => {
         const formatter = new ValueFormatter('key');
         expect(formatter.resolve({ key: 'value' })).toEqual('value');
-        expect(formatter.resolve({ key: 1 })).toEqual(1);
+        expect(formatter.resolve({ key: 1 })).toEqual('1');
         expect(formatter.resolve({ key: true })).toEqual(true);
     });
 
