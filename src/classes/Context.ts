@@ -57,7 +57,7 @@ export default class Context {
     /**
      * {@link translate} alias
      */
-    public t(key: string, object?: any): string {
+    public t(key: string, object?: Record<string, unknown>): string {
         return this.translate(key, object);
     }
 
