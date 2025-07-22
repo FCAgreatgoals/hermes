@@ -25,6 +25,8 @@ type SwitchCaseRange = {
 };
 type SwitchCaseType = SwitchCaseRange | number | string;
 
+const REGEX = /(-inf|\d+!?)-(\d+!?|inf)/;
+
 export default class SwitchFormatter {
     private readonly key: string;
     private readonly cases: [SwitchCaseType, string][];
@@ -43,7 +45,7 @@ export default class SwitchFormatter {
     }
 
     private parseCondition(condition: string): SwitchCaseType {
-        const match = condition.match(/(-inf|\d+!?)-(\d+!?|inf)/);
+        const match = condition.match(REGEX);
         if (!match) {
             if (!Number.isNaN(parseInt(condition)))
                 return parseInt(condition);

@@ -33,6 +33,8 @@ export class StringFormatter {
 
 }
 
+const REGEX = /^(\w+)(?::(\w+)\((.+)\))?$/;
+
 export class FormattedString {
 
     private parts: (string | StringFormatter)[] = [];
@@ -75,7 +77,7 @@ export class FormattedString {
     }
 
     private static parseExpression(expression: string): StringFormatter {
-        const data = expression.match(/^(\w+)(?::(\w+)\((.+)\))?$/);
+        const data = expression.match(REGEX);
         if (!data)
             throw new Error(`Invalid expression: ${expression}`);
         if (!data[2]) {
