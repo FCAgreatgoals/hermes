@@ -18,7 +18,7 @@
  */
 
 import { resolve } from 'path'
-import { Langs } from '../types/Langs.js'
+import { Langs } from '../types/Langs'
 import { existsSync } from 'fs'
 
 export interface HermesConfig {

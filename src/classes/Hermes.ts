@@ -17,10 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Langs, LangsKeys } from '../types/Langs.js'
-import LangData from './LangData.js'
-import Context from './Context.js';
-import { LocalizedObject } from '../types/LocalizedObject.js';
+import { Langs, LangsKeys } from '../types/Langs'
+import LangData from './LangData'
+import Context from './Context';
+import { LocalizedObject } from '../types/LocalizedObject';
 import { readFileSync } from 'fs';
 
 /**

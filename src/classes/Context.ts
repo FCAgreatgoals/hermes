@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import LangData from "./LangData.js";
+import LangData from "./LangData";
 
 export default class Context {
 

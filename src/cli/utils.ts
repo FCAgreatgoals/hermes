@@ -18,9 +18,9 @@
  */
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'fs'
-import { HermesConfig } from './HermesConfig.js'
+import { HermesConfig } from './HermesConfig'
 import { join, relative } from 'path'
-import { Langs } from '../types/Langs.js'
+import { Langs } from '../types/Langs'
 
 export function flattenWithSource(obj: Record<string, any>, prefix = '', source = ''): Record<string, string> {
 	let result: Record<string, string> = {}

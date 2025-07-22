@@ -18,12 +18,12 @@
  */
 
 import { Command } from 'commander'
-import { loadHermesConfig } from '../HermesConfig.js'
+import { loadHermesConfig } from '../HermesConfig'
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
 import { join } from 'path'
 
-import { collectLocales, loadTranslations } from '../utils.js'
-import { loadTranslationsRaw, validateTranslations } from '../validations.js'
+import { collectLocales, loadTranslations } from '../utils'
+import { loadTranslationsRaw, validateTranslations } from '../validations'
 
  export function registerBuildCommand(program: Command) {
 	program

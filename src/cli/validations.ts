@@ -19,9 +19,9 @@
 
 import { existsSync, readFileSync, statSync } from 'fs'
 import { join, relative } from 'path'
-import { Langs } from '../types/Langs.js'
-import { HermesConfig } from './HermesConfig.js'
-import { flattenWithSource, readAllJsonFiles } from './utils.js'
+import { Langs } from '../types/Langs'
+import { HermesConfig } from './HermesConfig'
+import { flattenWithSource, readAllJsonFiles } from './utils'
 
 export function validateTranslations(allTranslations: Record<Langs, Record<string, string>>) {
 	const langs = Object.keys(allTranslations) as Langs[]

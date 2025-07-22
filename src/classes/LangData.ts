@@ -17,9 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { readFile, readdir, stat } from "fs/promises";
-import { Langs } from "../types/Langs.js";
-import { FormattedString } from "./format/FormattedString.js";
+import { Langs } from "../types/Langs";
+import { FormattedString } from "./format/FormattedString";
 
 export default class LangData {
     public readonly lang: Langs

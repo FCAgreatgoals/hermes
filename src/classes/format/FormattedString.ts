@@ -17,12 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import ConditionalFormatter from "./ConditionalFormatter.js";
-import DateFormatter from "./DateFormatter.js";
-import ValueFormatter from "./ValueFormatter.js";
-import TernaryFormatter from "./TernaryFormatter.js";
-import PluralFormatter from "./PluralFormatter.js";
-import SwitchFormatter from "./SwitchFormatter.js";
+import ConditionalFormatter from "./ConditionalFormatter";
+import DateFormatter from "./DateFormatter";
+import ValueFormatter from "./ValueFormatter";
+import TernaryFormatter from "./TernaryFormatter";
+import PluralFormatter from "./PluralFormatter";
+import SwitchFormatter from "./SwitchFormatter";
 
 export class StringFormatter {
 

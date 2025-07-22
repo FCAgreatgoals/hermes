@@ -44,7 +44,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest",
+    "test": "npm run build && jest",
     "start": "node ./bin/hermes.js"
   },
   "type": "module"

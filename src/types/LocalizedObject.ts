@@ -17,6 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Langs } from "./Langs.js";
+import { Langs } from "./Langs";
 
 export type LocalizedObject = Partial<Record<Langs, string>>;
