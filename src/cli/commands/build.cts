@@ -41,7 +41,7 @@ import { loadTranslationsRaw, validateTranslations } from '../validations';
 			const locales = collectLocales(config);
 
 			if (config.checkTranslations) {
-				const rawTranslations: Record<string, any> = {} as any;
+				const rawTranslations: Record<string, Record<string, string>> = {};
 
 				for (const locale of locales) {
 					rawTranslations[locale] = loadTranslationsRaw(locale, config);
@@ -50,7 +50,7 @@ import { loadTranslationsRaw, validateTranslations } from '../validations';
 				validateTranslations(rawTranslations);
 			}
 
-			const translations: Record<string, any> = {};
+			const translations: Record<string, Record<string, string>> = {};
 
 			for (const locale of locales) {
 				translations[locale] = loadTranslations(locale, config);
