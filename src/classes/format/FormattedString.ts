@@ -23,6 +23,7 @@ import ValueFormatter from "./ValueFormatter";
 import TernaryFormatter from "./TernaryFormatter";
 import PluralFormatter from "./PluralFormatter";
 import SwitchFormatter from "./SwitchFormatter";
+import { FORMAT_EXPRESSION_REGEX } from '../../constants';
 
 export class StringFormatter {
 
@@ -32,8 +33,6 @@ export class StringFormatter {
     }
 
 }
-
-const REGEX = /^(\w+)(?::(\w+)\((.+)\))?$/;
 
 export class FormattedString {
 
@@ -77,7 +76,7 @@ export class FormattedString {
     }
 
     private static parseExpression(expression: string): StringFormatter {
-        const data = expression.match(REGEX);
+        const data = expression.match(FORMAT_EXPRESSION_REGEX);
         if (!data)
             throw new Error(`Invalid expression: ${expression}`);
         if (!data[2]) {

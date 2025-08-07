@@ -17,15 +17,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { SWITCH_FORMATTER_REGEX } from '../../constants';
+
 type SwitchCaseRange = {
     left: number | '-inf'
     right: number | 'inf'
     includeLeft: boolean
     includeRight: boolean
 };
-type SwitchCaseType = SwitchCaseRange | number | string;
 
-const REGEX = /(-inf|\d+!?)-(\d+!?|inf)/;
+type SwitchCaseType = SwitchCaseRange | number | string;
 
 export default class SwitchFormatter {
     private readonly key: string;
@@ -45,7 +46,7 @@ export default class SwitchFormatter {
     }
 
     private parseCondition(condition: string): SwitchCaseType {
-        const match = condition.match(REGEX);
+        const match = condition.match(SWITCH_FORMATTER_REGEX);
         if (!match) {
             if (!Number.isNaN(parseInt(condition)))
                 return parseInt(condition);

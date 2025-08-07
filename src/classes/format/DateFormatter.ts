@@ -17,6 +17,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import {
+    DAY_REGEX,
+    FULL_YEAR_REGEX,
+    HOUR_REGEX,
+    MINUTE_REGEX,
+    MONTH_REGEX,
+    SECOND_REGEX,
+    YEAR_REGEX
+} from '../../constants';
+
 export default class DateFormatter {
 
     private readonly key: string;
@@ -34,13 +44,13 @@ export default class DateFormatter {
         // D for the day of the week, M for the month name
         // Etc.
         return this.format
-            .replace(/\bYYYY\b/, date.getFullYear().toString())
-            .replace(/\bYY\b/, date.getFullYear().toString().slice(-2))
-            .replace(/\bMM\b/, (date.getMonth() + 1).toString().padStart(2, '0'))
-            .replace(/\bDD\b/, date.getDate().toString().padStart(2, '0'))
-            .replace(/\bhh\b/, date.getHours().toString().padStart(2, '0'))
-            .replace(/\bmm\b/, date.getMinutes().toString().padStart(2, '0'))
-            .replace(/\bss\b/, date.getSeconds().toString().padStart(2, '0'));
+            .replace(FULL_YEAR_REGEX, date.getFullYear().toString())
+            .replace(YEAR_REGEX, date.getFullYear().toString().slice(-2))
+            .replace(MONTH_REGEX, (date.getMonth() + 1).toString().padStart(2, '0'))
+            .replace(DAY_REGEX, date.getDate().toString().padStart(2, '0'))
+            .replace(HOUR_REGEX, date.getHours().toString().padStart(2, '0'))
+            .replace(MINUTE_REGEX, date.getMinutes().toString().padStart(2, '0'))
+            .replace(SECOND_REGEX, date.getSeconds().toString().padStart(2, '0'));
     }
 
     public resolve(object: Record<string, unknown>): string {

@@ -18,14 +18,23 @@
  */
 
 import { Command } from 'commander';
-import { loadHermesConfig } from '../HermesConfig';
-import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
+import {
+	existsSync,
+	mkdirSync,
+	rmSync,
+	writeFileSync
+} from 'fs';
 import { join } from 'path';
 
-import { collectLocales, loadTranslations } from '../utils';
-import { loadTranslationsRaw, validateTranslations } from '../validations';
+import { loadHermesConfig } from '../HermesConfig';
+import {
+	collectLocales,
+	loadTranslations,
+	loadTranslationsRaw
+} from '../utils';
+import { validateTranslations } from '../validations';
 
- export function registerBuildCommand(program: Command) {
+export function registerBuildCommand(program: Command) {
 	program
 		.command('build')
 		.description('Builds merged flat translation files per language with fallback support')

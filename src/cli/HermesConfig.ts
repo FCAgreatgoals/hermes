@@ -18,20 +18,25 @@
  */
 
 import { resolve } from 'path';
-import { Langs } from '../types/Langs.js';
 import { existsSync } from 'fs';
+
+import { Langs } from '../types';
+
+export type KeysType = 'namespaced' | 'path' | 'flat';
 
 export interface HermesConfig {
 	localesDir: string
 	buildDir: string
 	checkTranslations: boolean
-	fallbackChains: Record<string, string[]>
+	keys: KeysType
+	fallbackChains: Record<string, Langs[]>
 }
 
 export const DEFAULT_CONFIG: HermesConfig = {
 	localesDir: 'locales',
 	buildDir: '.hermes',
 	checkTranslations: true,
+	keys: 'flat',
 	fallbackChains: {
 		/* [Langs.INDONESIAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
 		[Langs.DANISH]: [Langs.SWEDISH, Langs.NORWEGIAN],
@@ -71,6 +76,7 @@ export const DEFAULT_CONFIG: HermesConfig = {
 
 export async function loadHermesConfig(): Promise<HermesConfig> {
 	const configPath = resolve('hermes.config.js');
+
 	if (existsSync(configPath)) {
 		const config = (await import(configPath)).default as Partial<HermesConfig>;
 
@@ -78,6 +84,7 @@ export async function loadHermesConfig(): Promise<HermesConfig> {
 			localesDir: config.localesDir || DEFAULT_CONFIG.localesDir,
 			buildDir: config.buildDir || DEFAULT_CONFIG.buildDir,
 			checkTranslations: config.checkTranslations || DEFAULT_CONFIG.checkTranslations,
+			keys: config.keys || DEFAULT_CONFIG.keys,
 			fallbackChains: {
 				...DEFAULT_CONFIG.fallbackChains,
 				...config.fallbackChains

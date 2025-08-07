@@ -17,31 +17,34 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
+import {
+	existsSync,
+	readdirSync,
+	readFileSync,
+	statSync
+} from 'fs';
+import {
+	join,
+	relative
+} from 'path';
+
 import { HermesConfig } from './HermesConfig';
-import { join, relative } from 'path';
-import { Langs } from '../types/Langs.js';
+import {
+	Langs,
+	RecursiveRecord
+} from '../types';
 
-export function flattenWithSource(obj: Record<string, any>, prefix = '', source = ''): Record<string, string> {
-	let result: Record<string, string> = {};
+const pathSeparator = {
+	flat: '.',
+	path: '/',
+	namespaced: '/'
+};
 
-	for (const key in obj) {
-		const value = obj[key];
-		const fullKey = prefix ? `${prefix}.${key}` : key;
-
-		if (typeof value === 'object' && value !== null) {
-			result = {
-				...result,
-				...flattenWithSource(value, fullKey, source)
-			};
-		} else {
-			const namespacedKey = source ? `${source}:${fullKey}` : fullKey;
-			result[namespacedKey] = String(value);
-		}
-	}
-
-	return result;
-}
+const namespaceSeparator = {
+	flat: ':',
+	namespaced: ':',
+	path: '.'
+};
 
 export function collectLocales(config: HermesConfig): string[] {
 	const entries = readdirSync(config.localesDir);
@@ -57,6 +60,27 @@ export function collectLocales(config: HermesConfig): string[] {
 	}
 
 	return files;
+}
+
+export function flattenTranslations(obj: RecursiveRecord, keysType: HermesConfig['keys'], prefix = '', source = ''): Record<string, string> {
+	let result: Record<string, string> = {};
+
+	for (const key in obj) {
+		const value = obj[key];
+		const fullKey = prefix ? `${prefix}.${key}` : key;
+
+		if (typeof value === 'object' && value !== null) {
+			result = {
+				...result,
+				...flattenTranslations(value, keysType, fullKey, source)
+			};
+		} else {
+			const namespacedKey = source ? `${source}${namespaceSeparator[keysType]}${fullKey}` : fullKey;
+			result[namespacedKey] = String(value);
+		}
+	}
+
+	return result;
 }
 
 export function readAllJsonFiles(dir: string): string[] {
@@ -77,18 +101,15 @@ export function readAllJsonFiles(dir: string): string[] {
 	return results;
 }
 
-export function loadTranslations(locale: string, config: HermesConfig, visited = new Set<string>()): Record<string, any> {
-	if (visited.has(locale)) return {};
-	visited.add(locale);
-
+export function loadTranslationsRaw(locale: string, config: HermesConfig): Record<string, string> {
 	const filePath = join(config.localesDir, `${locale}.json`);
 	const dirPath = join(config.localesDir, locale);
 
-	let merged: Record<string, any> = {};
+	let merged: Record<string, string> = {};
 
 	if (existsSync(filePath)) {
 		const content = JSON.parse(readFileSync(filePath, 'utf-8'));
-		const flat = flattenWithSource(content);
+		const flat = flattenTranslations(content, config.keys);
 
 		merged = {
 			...merged,
@@ -100,15 +121,29 @@ export function loadTranslations(locale: string, config: HermesConfig, visited =
 		const jsonFiles = readAllJsonFiles(dirPath);
 
 		for (const fullPath of jsonFiles) {
-			const relativePath = relative(dirPath, fullPath).replace(/\.json$/, '').replace(/\\/g, '/').replace(/\//g, '/');
+			const relativePath = relative(dirPath, fullPath)
+				.replace(/\.json$/, '')
+				.replace(/\\/g, pathSeparator[config.keys])
+				.replace(/\//g, pathSeparator[config.keys]);
+
 			const content = JSON.parse(readFileSync(fullPath, 'utf-8'));
-			const namespaced = flattenWithSource(content, '', relativePath);
+			const namespaced = flattenTranslations(content, config.keys, '', relativePath);
+
 			merged = {
 				...merged,
 				...namespaced
 			};
 		}
 	}
+
+	return merged;
+}
+
+export function loadTranslations(locale: string, config: HermesConfig, visited = new Set<string>()): Record<string, string> {
+	if (visited.has(locale)) return {};
+	visited.add(locale);
+
+	let merged = loadTranslationsRaw(locale, config);
 
 	const localeFallbacks = config.fallbackChains[locale] || [];
 	const defaultFallbacks = config.fallbackChains.default || [];
@@ -120,6 +155,7 @@ export function loadTranslations(locale: string, config: HermesConfig, visited =
 
 	for (const fallback of fallbacks) {
 		const fallbackData = loadTranslations(fallback, config, visited);
+
 		merged = {
 			...fallbackData,
 			...merged

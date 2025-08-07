@@ -16,12 +16,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+import { readFileSync } from 'fs';
 
-import { Langs, LangsKeys } from '../types/Langs';
+import {
+    Langs,
+    LangsKeys,
+    LocalizedObject
+} from '../types';
 import LangData from './LangData';
 import Context from './Context';
-import { LocalizedObject } from '../types/LocalizedObject';
-import { readFileSync } from 'fs';
 
 /**
  * @typedef WarnStrategy
@@ -42,12 +45,9 @@ export type HermesInitOptions = Partial<{
 }>;
 
 export default class Hermes {
-    private constructor(options: HermesInitOptions) {
-        this.options = options;
-    }
+
     private static instance: Hermes;
     private translations: Record<Langs, LangData> = {} as Record<Langs, LangData>;
-    private readonly options: HermesInitOptions = {};
 
     /**
      * @method init
@@ -55,7 +55,7 @@ export default class Hermes {
      *
      * @param options (optional) options for the i18n system
      */
-    public static async init(options: HermesInitOptions = {
+    public static init(options: HermesInitOptions = {
         translationDir: './.hermes', // default value
     }) {
         if (Hermes.instance)
@@ -64,14 +64,14 @@ export default class Hermes {
         if (!options.translationDir)
             options.translationDir = './.hermes';
 
-        Hermes.instance = new Hermes(options);
+        Hermes.instance = new Hermes();
 
         const dir = options?.translationDir;
 
         const translations = JSON.parse(readFileSync(`${dir}/translations.json`, 'utf-8'));
 
         for (const lang of Object.keys(translations) as Array<Langs>) {
-            Hermes.instance.translations[lang] = await LangData.create(lang, translations[lang]);
+            Hermes.instance.translations[lang] = LangData.create(lang, translations[lang]);
         }
     }
 

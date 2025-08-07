@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Langs } from "../types/Langs";
+import { Langs } from "../types";
 import { FormattedString } from "./format/FormattedString";
 
 export default class LangData {
@@ -33,14 +33,14 @@ export default class LangData {
         return this.strings;
     }
 
-    public static async create(lang: Langs, data: Record<string, any>): Promise<LangData> {
+    public static create(lang: Langs, data: Record<string, string>): LangData {
         if (!Object.values(Langs).includes(lang))
             throw new Error(`Invalid lang: ${lang}`);
 
         const instance = new LangData(lang);
 
         const keyParts: string[] = [];
-        const parseObject = (obj: Record<string, any>) => {
+        const parseObject = (obj: Record<string, string>) => {
             for (const [key, value] of Object.entries(obj)) {
                 keyParts.push(key);
                 if (typeof value === 'object') parseObject(value); else instance.strings[keyParts.join('.')] = FormattedString.create(value);

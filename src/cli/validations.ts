@@ -17,17 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { existsSync, readFileSync, statSync } from 'fs';
-import { join, relative } from 'path';
-import { Langs } from '../types/Langs.js';
-import { HermesConfig } from './HermesConfig';
-import { flattenWithSource, readAllJsonFiles } from './utils.js';
+import { Langs } from '../types';
 
 export function validateTranslations(allTranslations: Record<Langs, Record<string, string>>) {
 	const langs = Object.keys(allTranslations) as Langs[];
 
-	const missing: Record<Langs, Set<string>> = {} as any;
-	const empty: Record<Langs, Set<string>> = {} as any;
+	const missing = {} as Record<Langs, Set<string>>;
+	const empty = {} as Record<Langs, Set<string>>;
 
 	for (const lang of langs) {
 		const current = allTranslations[lang];
@@ -38,13 +34,8 @@ export function validateTranslations(allTranslations: Record<Langs, Record<strin
 			empty[lang] = new Set<string>();
 
 		for (const key of Object.keys(current)) {
-			if (
-				current[key] === '' ||
-				current[key] === null ||
-				current[key] === undefined
-			) {
+			if (isEmptyTranslation(current[key]))
 				empty[lang].add(key);
-			}
 
 			for (const otherLang of langs) {
 				if (otherLang === lang)
@@ -54,17 +45,22 @@ export function validateTranslations(allTranslations: Record<Langs, Record<strin
 					if (!missing[otherLang])
 						missing[otherLang] = new Set<string>();
 
-					if (!empty[otherLang])
-						empty[otherLang] = new Set<string>();
-
 					missing[otherLang].add(key);
 				}
 			}
 		}
 	}
 
+	checkMissingTranslations(langs, missing);
+	checkEmptyTranslations(langs, empty);
+}
+
+function isEmptyTranslation(value: string | null | undefined): boolean {
+	return value === '' || value === null || value === undefined;
+}
+
+export function checkMissingTranslations(langs: Langs[], missing: Record<Langs, Set<string>>): void {
 	const missingCount = langs.reduce((acc, l) => acc + missing[l].size, 0);
-	const emptyCount = langs.reduce((acc, l) => acc + empty[l].size, 0);
 
 	if (missingCount > 0) {
 		console.warn('[i18n] Missing translations:');
@@ -75,6 +71,10 @@ export function validateTranslations(allTranslations: Record<Langs, Record<strin
 			}
 		}
 	}
+}
+
+export function checkEmptyTranslations(langs: Langs[], empty: Record<Langs, Set<string>>): void {
+	const emptyCount = langs.reduce((acc, l) => acc + empty[l].size, 0);
 
 	if (emptyCount > 0) {
 		console.warn('[i18n] Empty translations:');
@@ -85,32 +85,4 @@ export function validateTranslations(allTranslations: Record<Langs, Record<strin
 			}
 		}
 	}
-}
-
-export function loadTranslationsRaw(locale: string, config: HermesConfig): Record<string, string> {
-	const filePath = join(config.localesDir, `${locale}.json`);
-	const dirPath = join(config.localesDir, locale);
-
-	let merged: Record<string, string> = {};
-
-	if (existsSync(filePath)) {
-		const content = JSON.parse(readFileSync(filePath, 'utf-8'));
-		const flat = flattenWithSource(content);
-		merged = { ...merged, ...flat };
-	}
-
-	if (existsSync(dirPath) && statSync(dirPath).isDirectory()) {
-		const jsonFiles = readAllJsonFiles(dirPath);
-
-		for (const fullPath of jsonFiles) {
-			const relativePath = relative(dirPath, fullPath)
-				.replace(/\.json$/, '')
-				.replace(/\\/g, '/');
-			const content = JSON.parse(readFileSync(fullPath, 'utf-8'));
-			const namespaced = flattenWithSource(content, '', relativePath);
-			merged = { ...merged, ...namespaced };
-		}
-	}
-
-	return merged;
 }

@@ -50,6 +50,5 @@
     "build": "tsc",
     "test": "npm run build && jest",
     "start": "node ./lib/cli/bin/hermes.js"
-  },
-  "type": "module"
+  }
 }
