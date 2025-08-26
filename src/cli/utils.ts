@@ -18,149 +18,149 @@
  */
 
 import {
-	existsSync,
-	readdirSync,
-	readFileSync,
-	statSync
+    existsSync,
+    readdirSync,
+    readFileSync,
+    statSync
 } from 'fs';
 import {
-	join,
-	relative
+    join,
+    relative
 } from 'path';
 
 import { HermesConfig } from './HermesConfig';
 import {
-	Langs,
-	RecursiveRecord
+    Langs,
+    RecursiveRecord
 } from '../types';
 
 const pathSeparator = {
-	flat: '.',
-	path: '/',
-	namespaced: '/'
+    flat: '.',
+    path: '/',
+    namespaced: '/'
 };
 
 const namespaceSeparator = {
-	flat: ':',
-	namespaced: ':',
-	path: '.'
+    flat: ':',
+    namespaced: ':',
+    path: '.'
 };
 
 export function collectLocales(config: HermesConfig): string[] {
-	const entries = readdirSync(config.localesDir);
-	const files: string[] = [];
+    const entries = readdirSync(config.localesDir);
+    const files: string[] = [];
 
-	for (const entry of entries) {
-		const lang = entry.replace(/\.json$/, '');
+    for (const entry of entries) {
+        const lang = entry.replace(/\.json$/, '');
 
-		if (!Object.values(Langs).includes(lang as Langs))
-			continue;
+        if (!Object.values(Langs).includes(lang as Langs))
+            continue;
 
-		files.push(lang);
-	}
+        files.push(lang);
+    }
 
-	return files;
+    return files;
 }
 
 export function flattenTranslations(obj: RecursiveRecord, keysType: HermesConfig['keys'], prefix = '', source = ''): Record<string, string> {
-	let result: Record<string, string> = {};
+    let result: Record<string, string> = {};
 
-	for (const key in obj) {
-		const value = obj[key];
-		const fullKey = prefix ? `${prefix}.${key}` : key;
+    for (const key in obj) {
+        const value = obj[key];
+        const fullKey = prefix ? `${prefix}.${key}` : key;
 
-		if (typeof value === 'object' && value !== null) {
-			result = {
-				...result,
-				...flattenTranslations(value, keysType, fullKey, source)
-			};
-		} else {
-			const namespacedKey = source ? `${source}${namespaceSeparator[keysType]}${fullKey}` : fullKey;
-			result[namespacedKey] = String(value);
-		}
-	}
+        if (typeof value === 'object' && value !== null) {
+            result = {
+                ...result,
+                ...flattenTranslations(value, keysType, fullKey, source)
+            };
+        } else {
+            const namespacedKey = source ? `${source}${namespaceSeparator[keysType]}${fullKey}` : fullKey;
+            result[namespacedKey] = String(value);
+        }
+    }
 
-	return result;
+    return result;
 }
 
 export function readAllJsonFiles(dir: string): string[] {
-	const results: string[] = [];
-	const list = readdirSync(dir);
+    const results: string[] = [];
+    const list = readdirSync(dir);
 
-	for (const file of list) {
-		const fullPath = join(dir, file);
-		const stat = statSync(fullPath);
+    for (const file of list) {
+        const fullPath = join(dir, file);
+        const stat = statSync(fullPath);
 
-		if (stat && stat.isDirectory()) {
-			results.push(...readAllJsonFiles(fullPath));
-		} else if (file.endsWith('.json')) {
-			results.push(fullPath);
-		}
-	}
+        if (stat && stat.isDirectory()) {
+            results.push(...readAllJsonFiles(fullPath));
+        } else if (file.endsWith('.json')) {
+            results.push(fullPath);
+        }
+    }
 
-	return results;
+    return results;
 }
 
 export function loadTranslationsRaw(locale: string, config: HermesConfig): Record<string, string> {
-	const filePath = join(config.localesDir, `${locale}.json`);
-	const dirPath = join(config.localesDir, locale);
+    const filePath = join(config.localesDir, `${locale}.json`);
+    const dirPath = join(config.localesDir, locale);
 
-	let merged: Record<string, string> = {};
+    let merged: Record<string, string> = {};
 
-	if (existsSync(filePath)) {
-		const content = JSON.parse(readFileSync(filePath, 'utf-8'));
-		const flat = flattenTranslations(content, config.keys);
+    if (existsSync(filePath)) {
+        const content = JSON.parse(readFileSync(filePath, 'utf-8'));
+        const flat = flattenTranslations(content, config.keys);
 
-		merged = {
-			...merged,
-			...flat
-		};
-	}
+        merged = {
+            ...merged,
+            ...flat
+        };
+    }
 
-	if (existsSync(dirPath) && statSync(dirPath).isDirectory()) {
-		const jsonFiles = readAllJsonFiles(dirPath);
+    if (existsSync(dirPath) && statSync(dirPath).isDirectory()) {
+        const jsonFiles = readAllJsonFiles(dirPath);
 
-		for (const fullPath of jsonFiles) {
-			const relativePath = relative(dirPath, fullPath)
-				.replace(/\.json$/, '')
-				.replace(/\\/g, pathSeparator[config.keys])
-				.replace(/\//g, pathSeparator[config.keys]);
+        for (const fullPath of jsonFiles) {
+            const relativePath = relative(dirPath, fullPath)
+                .replace(/\.json$/, '')
+                .replace(/\\/g, pathSeparator[config.keys])
+                .replace(/\//g, pathSeparator[config.keys]);
 
-			const content = JSON.parse(readFileSync(fullPath, 'utf-8'));
-			const namespaced = flattenTranslations(content, config.keys, '', relativePath);
+            const content = JSON.parse(readFileSync(fullPath, 'utf-8'));
+            const namespaced = flattenTranslations(content, config.keys, '', relativePath);
 
-			merged = {
-				...merged,
-				...namespaced
-			};
-		}
-	}
+            merged = {
+                ...merged,
+                ...namespaced
+            };
+        }
+    }
 
-	return merged;
+    return merged;
 }
 
 export function loadTranslations(locale: string, config: HermesConfig, visited = new Set<string>()): Record<string, string> {
-	if (visited.has(locale)) return {};
-	visited.add(locale);
+    if (visited.has(locale)) return {};
+    visited.add(locale);
 
-	let merged = loadTranslationsRaw(locale, config);
+    let merged = loadTranslationsRaw(locale, config);
 
-	const localeFallbacks = config.fallbackChains[locale] || [];
-	const defaultFallbacks = config.fallbackChains.default || [];
+    const localeFallbacks = config.fallbackChains[locale] || [];
+    const defaultFallbacks = config.fallbackChains.default || [];
 
-	const fallbacks = [
-		...localeFallbacks,
-		...defaultFallbacks.filter(lang => lang !== locale && !localeFallbacks.includes(lang))
-	];
+    const fallbacks = [
+        ...localeFallbacks,
+        ...defaultFallbacks.filter(lang => lang !== locale && !localeFallbacks.includes(lang))
+    ];
 
-	for (const fallback of fallbacks) {
-		const fallbackData = loadTranslations(fallback, config, visited);
+    for (const fallback of fallbacks) {
+        const fallbackData = loadTranslations(fallback, config, visited);
 
-		merged = {
-			...fallbackData,
-			...merged
-		};
-	}
+        merged = {
+            ...fallbackData,
+            ...merged
+        };
+    }
 
-	return merged;
+    return merged;
 }

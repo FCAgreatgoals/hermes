@@ -19,54 +19,54 @@
 
 import { Command } from 'commander';
 import {
-	existsSync,
-	mkdirSync,
-	rmSync,
-	writeFileSync
+    existsSync,
+    mkdirSync,
+    rmSync,
+    writeFileSync
 } from 'fs';
 import { join } from 'path';
 
 import { loadHermesConfig } from '../HermesConfig';
 import {
-	collectLocales,
-	loadTranslations,
-	loadTranslationsRaw
+    collectLocales,
+    loadTranslations,
+    loadTranslationsRaw
 } from '../utils';
 import { validateTranslations } from '../validations';
 
 export function registerBuildCommand(program: Command) {
-	program
-		.command('build')
-		.description('Builds merged flat translation files per language with fallback support')
-		.action(async () => {
-			const config = await loadHermesConfig();
+    program
+        .command('build')
+        .description('Builds merged flat translation files per language with fallback support')
+        .action(async () => {
+            const config = await loadHermesConfig();
 
-			if (existsSync(config.buildDir)) {
-				rmSync(config.buildDir, { recursive: true });
-			}
+            if (existsSync(config.buildDir)) {
+                rmSync(config.buildDir, { recursive: true });
+            }
 
-			mkdirSync(config.buildDir, { recursive: true });
+            mkdirSync(config.buildDir, { recursive: true });
 
-			const locales = collectLocales(config);
+            const locales = collectLocales(config);
 
-			if (config.checkTranslations) {
-				const rawTranslations: Record<string, Record<string, string>> = {};
+            if (config.checkTranslations) {
+                const rawTranslations: Record<string, Record<string, string>> = {};
 
-				for (const locale of locales) {
-					rawTranslations[locale] = loadTranslationsRaw(locale, config);
-				}
+                for (const locale of locales) {
+                    rawTranslations[locale] = loadTranslationsRaw(locale, config);
+                }
 
-				validateTranslations(rawTranslations);
-			}
+                validateTranslations(rawTranslations);
+            }
 
-			const translations: Record<string, Record<string, string>> = {};
+            const translations: Record<string, Record<string, string>> = {};
 
-			for (const locale of locales) {
-				translations[locale] = loadTranslations(locale, config);
-			}
+            for (const locale of locales) {
+                translations[locale] = loadTranslations(locale, config);
+            }
 
-			writeFileSync(join(config.buildDir, 'translations.json'), JSON.stringify(translations));
+            writeFileSync(join(config.buildDir, 'translations.json'), JSON.stringify(translations));
 
-			console.log(`✅ Built ${locales.join(', ')}`);
-		});
+            console.log(`✅ Built ${locales.join(', ')}`);
+        });
 }

@@ -19,70 +19,80 @@
 
 import { Langs } from '../types';
 
-export function validateTranslations(allTranslations: Record<Langs, Record<string, string>>) {
-	const langs = Object.keys(allTranslations) as Langs[];
+export function validateTranslations(allTranslations: Partial<Record<Langs, Record<string, string>>>) {
+    const langs = Object.keys(allTranslations) as Langs[];
 
-	const missing = {} as Record<Langs, Set<string>>;
-	const empty = {} as Record<Langs, Set<string>>;
+    const missing = {} as Record<Langs, Set<string>>;
+    const empty = {} as Record<Langs, Set<string>>;
 
-	for (const lang of langs) {
-		const current = allTranslations[lang];
+    for (const lang of langs) {
+        const current = allTranslations[lang] ?? {};
 
-		if (!missing[lang])
-			missing[lang] = new Set<string>();
-		if (!empty[lang])
-			empty[lang] = new Set<string>();
+        if (!missing[lang])
+            missing[lang] = new Set<string>();
+        if (!empty[lang])
+            empty[lang] = new Set<string>();
 
-		for (const key of Object.keys(current)) {
-			if (isEmptyTranslation(current[key]))
-				empty[lang].add(key);
+        for (const key of Object.keys(current)) {
+            if (isEmptyTranslation(current[key]))
+                empty[lang].add(key);
 
-			for (const otherLang of langs) {
-				if (otherLang === lang)
-					continue;
+            for (const otherLang of langs) {
+                if (otherLang === lang)
+                    continue;
 
-				if (!(key in allTranslations[otherLang])) {
-					if (!missing[otherLang])
-						missing[otherLang] = new Set<string>();
+                checkMissingInLang(key, otherLang, allTranslations, missing);
+            }
+        }
+    }
 
-					missing[otherLang].add(key);
-				}
-			}
-		}
-	}
+    checkMissingTranslations(langs, missing);
+    checkEmptyTranslations(langs, empty);
+}
 
-	checkMissingTranslations(langs, missing);
-	checkEmptyTranslations(langs, empty);
+function checkMissingInLang(key: string, lang: Langs, allTranslations: Partial<Record<Langs, Record<string, string>>>, missing: Partial<Record<Langs, Set<string>>>) {
+    if (!(key in (allTranslations[lang] ?? {}))) {
+        if (!missing[lang])
+            missing[lang] = new Set<string>();
+
+        missing[lang].add(key);
+    }
 }
 
 function isEmptyTranslation(value: string | null | undefined): boolean {
-	return value === '' || value === null || value === undefined;
+    return value === '' || value === null || value === undefined;
 }
 
-export function checkMissingTranslations(langs: Langs[], missing: Record<Langs, Set<string>>): void {
-	const missingCount = langs.reduce((acc, l) => acc + missing[l].size, 0);
+export function checkMissingTranslations(langs: Langs[], missing: Partial<Record<Langs, Set<string>>>): void {
+    const missingCount = langs.reduce((acc, l) => acc + (missing[l]?.size ?? 0), 0);
 
-	if (missingCount > 0) {
-		console.warn('[i18n] Missing translations:');
-		for (const lang of langs) {
-			if (missing[lang].size > 0) {
-				console.warn(`- ${lang}: ${missing[lang].size} missing:`);
-				for (const key of missing[lang]) console.warn(`  - ${key}`);
-			}
-		}
-	}
+    if (missingCount > 0) {
+        console.warn('[i18n] Missing translations:');
+        for (const lang of langs) {
+            if (!missing[lang])
+                continue;
+
+            if (missing[lang].size > 0) {
+                console.warn(`- ${lang}: ${missing[lang].size} missing:`);
+                for (const key of missing[lang]) console.warn(`  - ${key}`);
+            }
+        }
+    }
 }
 
-export function checkEmptyTranslations(langs: Langs[], empty: Record<Langs, Set<string>>): void {
-	const emptyCount = langs.reduce((acc, l) => acc + empty[l].size, 0);
+export function checkEmptyTranslations(langs: Langs[], empty: Partial<Record<Langs, Set<string>>>): void {
+    const emptyCount = langs.reduce((acc, l) => acc + (empty[l]?.size ?? 0), 0);
 
-	if (emptyCount > 0) {
-		console.warn('[i18n] Empty translations:');
-		for (const lang of langs) {
-			if (empty[lang].size > 0) {
-				console.warn(`- ${lang}: ${empty[lang].size} empty:`);
-				for (const key of empty[lang]) console.warn(`  - ${key}`);
-			}
-		}
-	}
+    if (emptyCount > 0) {
+        console.warn('[i18n] Empty translations:');
+        for (const lang of langs) {
+            if (!empty[lang])
+                continue;
+
+            if (empty[lang].size > 0) {
+                console.warn(`- ${lang}: ${empty[lang].size} empty:`);
+                for (const key of empty[lang]) console.warn(`  - ${key}`);
+            }
+        }
+    }
 }

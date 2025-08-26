@@ -25,71 +25,71 @@ import { Langs } from '../types';
 export type KeysType = 'namespaced' | 'path' | 'flat';
 
 export interface HermesConfig {
-	localesDir: string
-	buildDir: string
-	checkTranslations: boolean
-	keys: KeysType
-	fallbackChains: Record<string, Langs[]>
+    localesDir: string
+    buildDir: string
+    checkTranslations: boolean
+    keys: KeysType
+    fallbackChains: Record<string, Langs[]>
 }
 
 export const DEFAULT_CONFIG: HermesConfig = {
-	localesDir: 'locales',
-	buildDir: '.hermes',
-	checkTranslations: true,
-	keys: 'flat',
-	fallbackChains: {
-		/* [Langs.INDONESIAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
-		[Langs.DANISH]: [Langs.SWEDISH, Langs.NORWEGIAN],
-		/* [Langs.GERMAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
-		[Langs.ENGLISH_UK]: [Langs.ENGLISH_US, Langs.FRENCH],
-		[Langs.ENGLISH_US]: [Langs.ENGLISH_UK, Langs.SPANISH],
-		[Langs.SPANISH]: [Langs.SPANISH_LATAM, Langs.BRAZILIAN_PORTUGUESE],
-		[Langs.SPANISH_LATAM]: [Langs.SPANISH, Langs.BRAZILIAN_PORTUGUESE],
-		/* [Langs.FRENCH]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
-		[Langs.CROATIAN]: [Langs.POLISH, Langs.CZECH],
-		[Langs.ITALIAN]: [Langs.SPANISH, Langs.FRENCH],
-		[Langs.LITHUANIAN]: [Langs.POLISH, Langs.RUSSIAN],
-		[Langs.HUNGARIAN]: [Langs.ROMANIAN, Langs.POLISH],
-		[Langs.DUTCH]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.GERMAN],
-		[Langs.NORWEGIAN]: [Langs.SWEDISH, Langs.DANISH],
-		[Langs.POLISH]: [Langs.UKRAINIAN, Langs.RUSSIAN],
-		[Langs.BRAZILIAN_PORTUGUESE]: [Langs.SPANISH_LATAM, Langs.SPANISH],
-		/* [Langs.ROMANIAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
-		[Langs.FINNISH]: [Langs.SWEDISH],
-		[Langs.SWEDISH]: [Langs.NORWEGIAN, Langs.DANISH],
-		/* [Langs.VIETNAMESE]: [Langs.ENGLISH_US, Langs.ENGLISH_UK],
-		[Langs.TURKISH]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
-		[Langs.CZECH]: [Langs.POLISH, Langs.GERMAN],
-		[Langs.GREEK]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.ITALIAN],
-		[Langs.BULGARIAN]: [Langs.RUSSIAN],
-		[Langs.RUSSIAN]: [Langs.UKRAINIAN],
-		[Langs.UKRAINIAN]: [Langs.RUSSIAN],
-		/* [Langs.HINDI]: [Langs.ENGLISH_US, Langs.ENGLISH_UK],
-		[Langs.THAI]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
-		[Langs.CHINESE_CHINA]: [Langs.CHINESE_TAIWAN],
-		/* [Langs.JAPANESE]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.CHINESE_CHINA], */
-		[Langs.CHINESE_TAIWAN]: [Langs.CHINESE_CHINA],
-		/* [Langs.KOREAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.JAPANESE], */
-		default: [Langs.ENGLISH_US, Langs.ENGLISH_UK]
-	}
+    localesDir: 'locales',
+    buildDir: '.hermes',
+    checkTranslations: true,
+    keys: 'flat',
+    fallbackChains: {
+        /* [Langs.INDONESIAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
+        [Langs.DANISH]: [Langs.SWEDISH, Langs.NORWEGIAN],
+        /* [Langs.GERMAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
+        [Langs.ENGLISH_UK]: [Langs.ENGLISH_US, Langs.FRENCH],
+        [Langs.ENGLISH_US]: [Langs.ENGLISH_UK, Langs.SPANISH],
+        [Langs.SPANISH]: [Langs.SPANISH_LATAM, Langs.BRAZILIAN_PORTUGUESE],
+        [Langs.SPANISH_LATAM]: [Langs.SPANISH, Langs.BRAZILIAN_PORTUGUESE],
+        /* [Langs.FRENCH]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
+        [Langs.CROATIAN]: [Langs.POLISH, Langs.CZECH],
+        [Langs.ITALIAN]: [Langs.SPANISH, Langs.FRENCH],
+        [Langs.LITHUANIAN]: [Langs.POLISH, Langs.RUSSIAN],
+        [Langs.HUNGARIAN]: [Langs.ROMANIAN, Langs.POLISH],
+        [Langs.DUTCH]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.GERMAN],
+        [Langs.NORWEGIAN]: [Langs.SWEDISH, Langs.DANISH],
+        [Langs.POLISH]: [Langs.UKRAINIAN, Langs.RUSSIAN],
+        [Langs.BRAZILIAN_PORTUGUESE]: [Langs.SPANISH_LATAM, Langs.SPANISH],
+        /* [Langs.ROMANIAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
+        [Langs.FINNISH]: [Langs.SWEDISH],
+        [Langs.SWEDISH]: [Langs.NORWEGIAN, Langs.DANISH],
+        /* [Langs.VIETNAMESE]: [Langs.ENGLISH_US, Langs.ENGLISH_UK],
+        [Langs.TURKISH]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
+        [Langs.CZECH]: [Langs.POLISH, Langs.GERMAN],
+        [Langs.GREEK]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.ITALIAN],
+        [Langs.BULGARIAN]: [Langs.RUSSIAN],
+        [Langs.RUSSIAN]: [Langs.UKRAINIAN],
+        [Langs.UKRAINIAN]: [Langs.RUSSIAN],
+        /* [Langs.HINDI]: [Langs.ENGLISH_US, Langs.ENGLISH_UK],
+        [Langs.THAI]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
+        [Langs.CHINESE_CHINA]: [Langs.CHINESE_TAIWAN],
+        /* [Langs.JAPANESE]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.CHINESE_CHINA], */
+        [Langs.CHINESE_TAIWAN]: [Langs.CHINESE_CHINA],
+        /* [Langs.KOREAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.JAPANESE], */
+        default: [Langs.ENGLISH_US, Langs.ENGLISH_UK]
+    }
 };
 
 export async function loadHermesConfig(): Promise<HermesConfig> {
-	const configPath = resolve('hermes.config.js');
+    const configPath = resolve('hermes.config.js');
 
-	if (existsSync(configPath)) {
-		const config = (await import(configPath)).default as Partial<HermesConfig>;
+    if (existsSync(configPath)) {
+        const config = (await import(configPath)).default as Partial<HermesConfig>;
 
-		return {
-			localesDir: config.localesDir || DEFAULT_CONFIG.localesDir,
-			buildDir: config.buildDir || DEFAULT_CONFIG.buildDir,
-			checkTranslations: config.checkTranslations || DEFAULT_CONFIG.checkTranslations,
-			keys: config.keys || DEFAULT_CONFIG.keys,
-			fallbackChains: {
-				...DEFAULT_CONFIG.fallbackChains,
-				...config.fallbackChains
-			}
-		};
-	}
-	return DEFAULT_CONFIG;
+        return {
+            localesDir: config.localesDir || DEFAULT_CONFIG.localesDir,
+            buildDir: config.buildDir || DEFAULT_CONFIG.buildDir,
+            checkTranslations: config.checkTranslations || DEFAULT_CONFIG.checkTranslations,
+            keys: config.keys || DEFAULT_CONFIG.keys,
+            fallbackChains: {
+                ...DEFAULT_CONFIG.fallbackChains,
+                ...config.fallbackChains
+            }
+        };
+    }
+    return DEFAULT_CONFIG;
 }
