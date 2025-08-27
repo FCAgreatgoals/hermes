@@ -81,15 +81,14 @@ export async function loadHermesConfig(): Promise<HermesConfig> {
         const config = (await import(configPath)).default as Partial<HermesConfig>;
 
         return {
-            localesDir: config.localesDir || DEFAULT_CONFIG.localesDir,
-            buildDir: config.buildDir || DEFAULT_CONFIG.buildDir,
-            checkTranslations: config.checkTranslations || DEFAULT_CONFIG.checkTranslations,
-            keys: config.keys || DEFAULT_CONFIG.keys,
+            ...DEFAULT_CONFIG,
+            ...config,
             fallbackChains: {
                 ...DEFAULT_CONFIG.fallbackChains,
                 ...config.fallbackChains
             }
         };
     }
+
     return DEFAULT_CONFIG;
 }
