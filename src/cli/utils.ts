@@ -33,25 +33,14 @@ import {
     Langs,
     RecursiveRecord
 } from '../types';
-
-const pathSeparator = {
-    flat: '.',
-    path: '/',
-    namespaced: '/'
-};
-
-const namespaceSeparator = {
-    flat: ':',
-    namespaced: ':',
-    path: '.'
-};
+import { NAMESPACE_SEPARATORS, PATH_SEPARATORS } from '../constants';
 
 export function collectLocales(config: HermesConfig): string[] {
     const entries = readdirSync(config.localesDir);
     const files: string[] = [];
 
     for (const entry of entries) {
-        const lang = entry.replace(/\.json$/, '');
+        const lang = entry.replace(new RegExp(`\\$.json$`), '');
 
         if (!Object.values(Langs).includes(lang as Langs))
             continue;
@@ -75,7 +64,7 @@ export function flattenTranslations(obj: RecursiveRecord, keysType: HermesConfig
                 ...flattenTranslations(value, keysType, fullKey, source)
             };
         } else {
-            const namespacedKey = source ? `${source}${namespaceSeparator[keysType]}${fullKey}` : fullKey;
+            const namespacedKey = source ? `${source}${NAMESPACE_SEPARATORS[keysType]}${fullKey}` : fullKey;
             result[namespacedKey] = String(value);
         }
     }
@@ -122,9 +111,9 @@ export function loadTranslationsRaw(locale: string, config: HermesConfig): Recor
 
         for (const fullPath of jsonFiles) {
             const relativePath = relative(dirPath, fullPath)
-                .replace(/\.json$/, '')
-                .replace(/\\/g, pathSeparator[config.keys])
-                .replace(/\//g, pathSeparator[config.keys]);
+                .replace(new RegExp(`\\.json$`), '')
+                .replace(/\\/g, PATH_SEPARATORS[config.keys])
+                .replace(/\//g, PATH_SEPARATORS[config.keys]);
 
             const content = JSON.parse(readFileSync(fullPath, 'utf-8'));
             const namespaced = flattenTranslations(content, config.keys, '', relativePath);

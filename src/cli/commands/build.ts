@@ -33,6 +33,7 @@ import {
     loadTranslationsRaw
 } from '../utils';
 import { validateTranslations } from '../validations';
+import { TRANSLATIONS_FILE_NAME } from '../../constants';
 
 export function registerBuildCommand(program: Command) {
     program
@@ -65,7 +66,7 @@ export function registerBuildCommand(program: Command) {
                 translations[locale] = loadTranslations(locale, config);
             }
 
-            writeFileSync(join(config.buildDir, 'translations.json'), JSON.stringify(translations));
+            writeFileSync(join(config.buildDir, TRANSLATIONS_FILE_NAME), JSON.stringify(translations));
 
             console.log(`✅ Built ${locales.join(', ')}`);
         });

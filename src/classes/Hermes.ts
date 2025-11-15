@@ -23,6 +23,7 @@ import {
     LangsKeys,
     LocalizedObject
 } from '../types';
+import { DEFAULT_TRANSLATION_DIR, TRANSLATIONS_FILE_NAME } from '../constants';
 import LangData from './LangData';
 import Context from './Context';
 
@@ -56,19 +57,19 @@ export default class Hermes {
      * @param options (optional) options for the i18n system
      */
     public static init(options: HermesInitOptions = {
-        translationDir: './.hermes', // default value
+        translationDir: DEFAULT_TRANSLATION_DIR, // default value
     }) {
         if (Hermes.instance)
             throw new Error('I18n already initialized');
 
         if (!options.translationDir)
-            options.translationDir = './.hermes';
+            options.translationDir = DEFAULT_TRANSLATION_DIR;
 
         Hermes.instance = new Hermes();
 
         const dir = options?.translationDir;
 
-        const translations = JSON.parse(readFileSync(`${dir}/translations.json`, 'utf-8'));
+        const translations = JSON.parse(readFileSync(`${dir}/${TRANSLATIONS_FILE_NAME}`, 'utf-8'));
 
         for (const lang of Object.keys(translations) as Array<Langs>) {
             Hermes.instance.translations[lang] = LangData.create(lang, translations[lang]);

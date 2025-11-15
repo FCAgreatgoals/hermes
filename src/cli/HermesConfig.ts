@@ -21,6 +21,7 @@ import { resolve } from 'path';
 import { existsSync } from 'fs';
 
 import { Langs } from '../types';
+import { DEFAULT_TRANSLATION_DIR, DEFAULT_LOCALES_DIR, CONFIG_FILE_NAME } from '../constants';
 
 export type KeysType = 'namespaced' | 'path' | 'flat';
 
@@ -33,8 +34,8 @@ export interface HermesConfig {
 }
 
 export const DEFAULT_CONFIG: HermesConfig = {
-    localesDir: 'locales',
-    buildDir: '.hermes',
+    localesDir: DEFAULT_LOCALES_DIR,
+    buildDir: DEFAULT_TRANSLATION_DIR,
     checkTranslations: true,
     keys: 'flat',
     fallbackChains: {
@@ -75,7 +76,7 @@ export const DEFAULT_CONFIG: HermesConfig = {
 };
 
 export async function loadHermesConfig(): Promise<HermesConfig> {
-    const configPath = resolve('hermes.config.js');
+    const configPath = resolve(CONFIG_FILE_NAME);
 
     if (existsSync(configPath)) {
         const config = (await import(configPath)).default as Partial<HermesConfig>;
