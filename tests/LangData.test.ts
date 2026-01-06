@@ -1,27 +1,31 @@
 import LangData from "../src/classes/LangData";
+import { Langs } from "../src/types";
+import { readFileSync } from "fs";
 
 describe('LangData_Init_Test', () => {
 
     test('invalid_lang', () => {
-        // @ts-expect-error testing
-        expect(async () => await LangData.create('eeee', './translations/eeee')).rejects.toThrow();
+        const data = { "test": "value" };
+        // @ts-expect-error testing invalid lang
+        expect(() => LangData.create('eeee', data)).toThrow('Invalid lang: eeee');
     });
 
-    test('valid_lang', async () => {
-        // @ts-expect-error testing
-        const res = await LangData.create('en-US', './translations/en-US');
+    test('valid_lang', () => {
+        const translations = JSON.parse(readFileSync('./.hermes/translations.json', 'utf-8'));
+        const res = LangData.create(Langs.ENGLISH_US, translations[Langs.ENGLISH_US]);
         expect(res).toBeDefined();
         expect(res.getStrings()).toBeDefined();
     });
 
     test('invalid_path', () => {
-        // @ts-expect-error testing
-        expect(async () => await LangData.create('en-US', './translations/en-US/invalid')).rejects.toThrow();
+        expect(() => {
+            readFileSync('./translations/en-US/invalid', 'utf-8');
+        }).toThrow();
     });
 
-    test('broken_json', async () => {
-        // @ts-expect-error testing
-        expect(await LangData.create('en-US', './tests/broken.json')).toBeDefined();
+    test('broken_json', () => {
+        const jsonContent = readFileSync('./tests/broken.json', 'utf-8');
+        expect(() => JSON.parse(jsonContent)).toThrow();
     });
 
 });
