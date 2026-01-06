@@ -48,7 +48,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "npm run build && jest",
+    "test": "npm run build && npm start build && jest",
     "start": "node ./lib/cli/bin/hermes.js"
   }
 }
