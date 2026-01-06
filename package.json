@@ -19,7 +19,11 @@
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "exports": {
-    ".": "./lib/index.js"
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    }
   },
   "files": [
     "lib"
