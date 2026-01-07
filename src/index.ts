@@ -20,7 +20,7 @@
 import Hermes from './classes/Hermes';
 import type Context from './classes/Context';
 
-export * from './types';
 export { Hermes, Context };
+export * from './types';
 
 export default Hermes;

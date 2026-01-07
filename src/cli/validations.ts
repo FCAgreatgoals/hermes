@@ -55,7 +55,7 @@ function checkMissingInLang(key: string, lang: Langs, allTranslations: Partial<R
         if (!missing[lang])
             missing[lang] = new Set<string>();
 
-        missing[lang].add(key);
+        missing[lang]!.add(key);
     }
 }
 
@@ -72,9 +72,9 @@ export function checkMissingTranslations(langs: Langs[], missing: Partial<Record
             if (!missing[lang])
                 continue;
 
-            if (missing[lang].size > 0) {
-                console.warn(`- ${lang}: ${missing[lang].size} missing:`);
-                for (const key of missing[lang]) console.warn(`  - ${key}`);
+            if (missing[lang]!.size > 0) {
+                console.warn(`- ${lang}: ${missing[lang]!.size} missing:`);
+                for (const key of missing[lang]!) console.warn(`  - ${key}`);
             }
         }
     }
@@ -89,9 +89,9 @@ export function checkEmptyTranslations(langs: Langs[], empty: Partial<Record<Lan
             if (!empty[lang])
                 continue;
 
-            if (empty[lang].size > 0) {
-                console.warn(`- ${lang}: ${empty[lang].size} empty:`);
-                for (const key of empty[lang]) console.warn(`  - ${key}`);
+            if (empty[lang]!.size > 0) {
+                console.warn(`- ${lang}: ${empty[lang]!.size} empty:`);
+                for (const key of empty[lang]!) console.warn(`  - ${key}`);
             }
         }
     }

@@ -23,16 +23,10 @@ import {
     readFileSync,
     statSync
 } from 'fs';
-import {
-    join,
-    relative
-} from 'path';
+import { join, relative } from 'path';
 
 import { HermesConfig } from './HermesConfig';
-import {
-    Langs,
-    RecursiveRecord
-} from '../types';
+import { Langs, RecursiveRecord } from '../types';
 import { NAMESPACE_SEPARATORS, PATH_SEPARATORS } from '../constants';
 
 export function collectLocales(config: HermesConfig): string[] {

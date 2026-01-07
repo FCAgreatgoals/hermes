@@ -27,11 +27,7 @@ import {
 import { join } from 'path';
 
 import { loadHermesConfig } from '../HermesConfig';
-import {
-    collectLocales,
-    loadTranslations,
-    loadTranslationsRaw
-} from '../utils';
+import { collectLocales, loadTranslations, loadTranslationsRaw } from '../utils';
 import { validateTranslations } from '../validations';
 import { TRANSLATIONS_FILE_NAME } from '../../constants';
 
