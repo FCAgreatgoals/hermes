@@ -31,10 +31,11 @@ import { NAMESPACE_SEPARATORS, PATH_SEPARATORS } from '../constants';
 
 export function collectLocales(config: HermesConfig): string[] {
     const entries = readdirSync(config.localesDir);
+
     const files: string[] = [];
 
     for (const entry of entries) {
-        const lang = entry.replace(new RegExp(`\\$.json$`), '');
+        const lang = entry.replace(/\.json$/, '');
 
         if (!Object.values(Langs).includes(lang as Langs))
             continue;
