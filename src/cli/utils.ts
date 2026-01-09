@@ -35,7 +35,7 @@ export function collectLocales(config: HermesConfig): string[] {
     const files: string[] = [];
 
     for (const entry of entries) {
-        const lang = entry.replace(/\.json$/, '');
+        const lang = entry.replace(/\.json5?$/, '');
 
         if (!Object.values(Langs).includes(lang as Langs))
             continue;

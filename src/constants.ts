@@ -23,7 +23,7 @@ export const PATH_SEPARATORS = {
 } as const;
 
 export const NAMESPACE_SEPARATORS = {
-    flat: ':',
-    namespaced: ':',
-    path: '.'
+    flat: '.',
+    path: '/',
+    namespaced: ':'
 } as const;
