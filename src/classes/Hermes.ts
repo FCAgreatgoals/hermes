@@ -19,7 +19,7 @@
 import { readFileSync } from 'fs';
 
 import { LangsKeys, LocalizedObject } from '../types';
-import { Langs, DEFAULT_TRANSLATION_DIR, TRANSLATIONS_FILE_NAME } from '../constants';
+import { Langs, DEFAULT_TRANSLATION_DIR, TRANSLATIONS_FILE_NAME, langToLocale } from '../constants';
 import LangData from './LangData';
 import Context from './Context';
 
@@ -117,6 +117,10 @@ export default class Hermes {
             throw new Error(`Localized object not found for key: ${key}`);
 
         return object;
+    }
+
+    public static getLocale(lang: Langs): string {
+        return langToLocale[lang];
     }
 
 }

@@ -62,3 +62,38 @@ export enum Langs {
     CHINESE_TAIWAN = 'zh-TW',
     KOREAN = 'ko'
 }
+
+export const langToLocale: Record<Langs, string> = {
+    [Langs.INDONESIAN]: 'id-ID',
+    [Langs.DANISH]: 'da-DK',
+    [Langs.GERMAN]: 'de-DE',
+    [Langs.ENGLISH_UK]: 'en-GB',
+    [Langs.ENGLISH_US]: 'en-US',
+    [Langs.SPANISH]: 'es-ES',
+    [Langs.SPANISH_LATAM]: 'es-419',
+    [Langs.FRENCH]: 'fr-FR',
+    [Langs.CROATIAN]: 'hr-HR',
+    [Langs.ITALIAN]: 'it-IT',
+    [Langs.LITHUANIAN]: 'lt-LT',
+    [Langs.HUNGARIAN]: 'hu-HU',
+    [Langs.DUTCH]: 'nl-NL',
+    [Langs.NORWEGIAN]: 'nb-NO',
+    [Langs.POLISH]: 'pl-PL',
+    [Langs.BRAZILIAN_PORTUGUESE]: 'pt-BR',
+    [Langs.ROMANIAN]: 'ro-RO',
+    [Langs.FINNISH]: 'fi-FI',
+    [Langs.SWEDISH]: 'sv-SE',
+    [Langs.VIETNAMESE]: 'vi-VN',
+    [Langs.TURKISH]: 'tr-TR',
+    [Langs.CZECH]: 'cs-CZ',
+    [Langs.GREEK]: 'el-GR',
+    [Langs.BULGARIAN]: 'bg-BG',
+    [Langs.RUSSIAN]: 'ru-RU',
+    [Langs.UKRAINIAN]: 'uk-UA',
+    [Langs.HINDI]: 'hi-IN',
+    [Langs.THAI]: 'th-TH',
+    [Langs.CHINESE_CHINA]: 'zh-CN',
+    [Langs.JAPANESE]: 'ja-JP',
+    [Langs.CHINESE_TAIWAN]: 'zh-TW',
+    [Langs.KOREAN]: 'ko-KR'
+}
