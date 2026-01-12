@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { Langs } from "../constants";
 import LangData from "./LangData";
 
 export default class Context {
@@ -31,6 +32,10 @@ export default class Context {
     private constructor(data: LangData, basePath: string) {
         this.data = data;
         this.basePath = basePath;
+    }
+
+    public get lang(): Langs {
+        return this.data.lang;
     }
 
     /**
