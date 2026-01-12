@@ -22,6 +22,7 @@ import { LangsKeys, LocalizedObject } from '../types';
 import { Langs, DEFAULT_TRANSLATION_DIR, TRANSLATIONS_FILE_NAME, langToLocale } from '../constants';
 import LangData from './LangData';
 import Context from './Context';
+import { DEFAULT_CONFIG } from '../cli/HermesConfig';
 
 /**
  * @typedef WarnStrategy
@@ -39,12 +40,18 @@ export type WarnStrategy = 'throw' | 'warn' | 'ignore';
  */
 export type HermesInitOptions = Partial<{
     translationDir: string
+    defaultLocale: Langs
 }>;
 
 export default class Hermes {
 
     private static instance: Hermes;
     private translations: Record<Langs, LangData> = {} as Record<Langs, LangData>;
+    private defaultLocale: Langs;
+
+    constructor(defaultLocale: Langs) {
+        this.defaultLocale = defaultLocale;
+    }
 
     /**
      * @method init
@@ -54,6 +61,7 @@ export default class Hermes {
      */
     public static init(options: HermesInitOptions = {
         translationDir: DEFAULT_TRANSLATION_DIR, // default value
+        defaultLocale: DEFAULT_CONFIG.fallbackChains.default[0] // default value
     }) {
         if (Hermes.instance)
             throw new Error('I18n already initialized');
@@ -61,7 +69,9 @@ export default class Hermes {
         if (!options.translationDir)
             options.translationDir = DEFAULT_TRANSLATION_DIR;
 
-        Hermes.instance = new Hermes();
+        Hermes.instance = new Hermes(
+            options.defaultLocale ?? DEFAULT_CONFIG.fallbackChains.default[0]
+        );
 
         const dir = options?.translationDir;
 
@@ -80,11 +90,11 @@ export default class Hermes {
      * @param basePath (optional) base path for translations
      * @returns
      */
-    public static getContext(lang: LangsKeys, basePath: string = '') {
+    public static getContext(lang: LangsKeys | 'default', basePath: string = '') {
         if (!Hermes.instance)
             throw new Error('I18n not initialized');
 
-        const langData = Hermes.instance.translations[lang];
+        const langData = Hermes.instance.translations[lang === 'default' ? Hermes.instance.defaultLocale : lang];
 
         if (!langData) {
             throw new Error(`Language not found: ${lang}`);
