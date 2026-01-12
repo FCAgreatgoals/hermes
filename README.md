@@ -96,13 +96,9 @@ To initialize Hermes, you will need to import the `Hermes` class and call the `i
 - `fallbackLanguage`: The language to use as a fallback if a language code is not found. **Does not have a default value.**
 
 ```typescript
-import { Hermes } from '@fca.gg/hermes';
+import Hermes from '@fca.gg/hermes';
 
-async function main() {
-    await Hermes.init()
-    // Do something with Hermes
-}
-main()
+Hermes.init()
 ```
 
 ### Context
@@ -174,14 +170,10 @@ Hermes provides options for handling missing and empty translations. By default,
 ```typescript
 import Hermes from '@fca.gg/hermes';
 
-async function main() {
-    await Hermes.init({
-        noMissingTranslations: 'throw',
-        noEmptyTranslations: 'ignore'
-    });
-    // Do something with Hermes
-}
-main()
+Hermes.init({
+    noMissingTranslations: 'throw',
+    noEmptyTranslations: 'ignore'
+});
 ```
 
 ### Nesting files
