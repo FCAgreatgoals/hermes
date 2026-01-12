@@ -1,6 +1,6 @@
 import Context from "../src/classes/Context";
 import LangData from "../src/classes/LangData";
-import { Langs } from "../src/types";
+import { Langs } from "../src/constants";
 import { readFileSync } from "fs";
 
 describe('Context_Init_Test', () => {
