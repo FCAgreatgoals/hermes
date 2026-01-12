@@ -17,40 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-export enum Langs {
-    INDONESIAN = 'id',
-    DANISH = 'da',
-    GERMAN = 'de',
-    ENGLISH_UK = 'en-GB',
-    ENGLISH_US = 'en-US',
-    SPANISH = 'es-ES',
-    SPANISH_LATAM = 'es-419',
-    FRENCH = 'fr',
-    CROATIAN = 'hr',
-    ITALIAN = 'it',
-    LITHUANIAN = 'lt',
-    HUNGARIAN = 'hu',
-    DUTCH = 'nl',
-    NORWEGIAN = 'no',
-    POLISH = 'pl',
-    BRAZILIAN_PORTUGUESE = 'pt-BR',
-    ROMANIAN = 'ro',
-    FINNISH = 'fi',
-    SWEDISH = 'sv-SE',
-    VIETNAMESE = 'vi',
-    TURKISH = 'tr',
-    CZECH = 'cs',
-    GREEK = 'el',
-    BULGARIAN = 'bg',
-    RUSSIAN = 'ru',
-    UKRAINIAN = 'uk',
-    HINDI = 'hi',
-    THAI = 'th',
-    CHINESE_CHINA = 'zh-CN',
-    JAPANESE = 'ja',
-    CHINESE_TAIWAN = 'zh-TW',
-    KOREAN = 'ko'
-}
+import { Langs } from "./constants";
 
 export type LangsKeys = `${Langs}`;
 

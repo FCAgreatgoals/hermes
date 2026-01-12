@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Langs } from "../types";
+import { Langs } from "../constants";
 import { FormattedString } from "./format/FormattedString";
 
 export default class LangData {

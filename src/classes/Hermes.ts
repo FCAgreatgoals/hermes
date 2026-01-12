@@ -18,8 +18,8 @@
  */
 import { readFileSync } from 'fs';
 
-import { Langs, LangsKeys, LocalizedObject } from '../types';
-import { DEFAULT_TRANSLATION_DIR, TRANSLATIONS_FILE_NAME } from '../constants';
+import { LangsKeys, LocalizedObject } from '../types';
+import { Langs, DEFAULT_TRANSLATION_DIR, TRANSLATIONS_FILE_NAME } from '../constants';
 import LangData from './LangData';
 import Context from './Context';
 

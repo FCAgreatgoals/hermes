@@ -20,8 +20,12 @@
 import { resolve } from 'path';
 import { existsSync } from 'fs';
 
-import { Langs } from '../types';
-import { DEFAULT_TRANSLATION_DIR, DEFAULT_LOCALES_DIR, CONFIG_FILE_NAME } from '../constants';
+import {
+    Langs,
+    DEFAULT_TRANSLATION_DIR,
+    DEFAULT_LOCALES_DIR,
+    CONFIG_FILE_NAME
+} from '../constants';
 
 export type KeysType = 'namespaced' | 'path' | 'flat';
 

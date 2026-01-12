@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Langs } from '../types';
+import { Langs } from '../constants';
 
 export function validateTranslations(allTranslations: Partial<Record<Langs, Record<string, string>>>) {
     const langs = Object.keys(allTranslations) as Langs[];

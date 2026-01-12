@@ -26,8 +26,8 @@ import {
 import { join, relative } from 'path';
 
 import { HermesConfig } from './HermesConfig';
-import { Langs, RecursiveRecord } from '../types';
-import { NAMESPACE_SEPARATORS, PATH_SEPARATORS } from '../constants';
+import { RecursiveRecord } from '../types';
+import { Langs, NAMESPACE_SEPARATORS, PATH_SEPARATORS } from '../constants';
 
 export function collectLocales(config: HermesConfig): string[] {
     const entries = readdirSync(config.localesDir);

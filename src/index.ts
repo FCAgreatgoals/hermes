@@ -19,8 +19,9 @@
 
 import Hermes from './classes/Hermes';
 import type Context from './classes/Context';
+import { Langs } from './constants';
 
-export { Hermes, Context };
+export { Hermes, Context, Langs };
 export * from './types';
 
 export default Hermes;
