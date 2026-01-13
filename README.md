@@ -21,13 +21,77 @@ To run the tests, use the following command:
 npm run test
 ```
 
+## Building Translations
+
+Before using Hermes in your application, you **must** build your translations. The build process compiles all translation files into a single optimized `translations.json` file that Hermes reads at runtime.
+
+### Build Command
+
+```bash
+npx hermes build
+```
+
+Or add it to your `package.json` scripts:
+```json
+{
+  "scripts": {
+    "build:i18n": "hermes build"
+  }
+}
+```
+
+### What Happens During Build
+
+The build command:
+
+1. **Scans your locales directory** (default: `./locales`) for translation files
+2. **Merges nested files** - Combines all JSON files (both root-level and nested directories) into flat translation objects
+3. **Applies fallback chains** - Automatically fills missing translations using configured fallback languages
+4. **Validates translations** - Checks for missing or empty translations (if `checkTranslations` is enabled)
+5. **Outputs a single file** - Creates `.hermes/translations.json` containing all languages in one optimized bundle
+
+The output file structure:
+```json
+{
+  "en-US": {
+    "key1": "value1",
+    "nested.key2": "value2"
+  },
+  "fr": {
+    "key1": "valeur1",
+    "nested.key2": "valeur2"
+  }
+}
+```
+
+### Configuration
+
+Create a `hermes.config.js` file in your project root to customize the build:
+
+```javascript
+export default {
+  localesDir: 'locales',           // Source directory for translation files
+  buildDir: './.hermes',           // Output directory for built translations
+  checkTranslations: true,         // Validate translations during build
+  keys: 'flat',                    // Key format: 'flat' (dot notation), 'path' (/), or 'namespaced' (:)
+  fallbackChains: {
+    'en-GB': ['en-US', 'fr'],
+    'es-419': ['es-ES'],
+    'default': ['en-US', 'en-GB']  // Default fallback chain
+  }
+};
+```
+
+> [!IMPORTANT]
+> The build step is **required** before running your application. When you call `Hermes.init()`, it automatically reads the pre-built `translations.json` file from the build directory for optimal performance.
+
 ## Usage
 
 ### Initialization
 In order to use Hermes, you will need to create a new directory to store your translations. Inside this directory, you can create as many JSON files as you like, each representing a different language. For example, you might have the following directory structure:
 
 ```
-translations/
+locales/
   en-US.json
   fr.json
   de.json
@@ -92,16 +156,23 @@ Each of these files should contain a JSON object with key-value pairs representi
 ```
 
 To initialize Hermes, you will need to import the `Hermes` class and call the `init()` method. This method can take an optional configuration object with the following properties:
-- `translationsDir`: The path to the directory containing your translation files. Defaults to `./translations`.
-- `noMissingTranslations`: Can be set to `warn`, `throw`, or `ignore`. Defaults to `warn`.
-- `noEmptyTranslations`: Can be set to `warn`, `throw`, or `ignore`. Defaults to `warn`.
-- `fallbackLanguage`: The language to use as a fallback if a language code is not found. **Does not have a default value.**
+- `translationDir`: The path to the directory containing your built translations. Defaults to `./.hermes`.
+- `defaultLocale`: The default language to use when requesting translations for 'default'. Defaults to `en-US`.
 
 ```typescript
 import Hermes from '@fca.gg/hermes';
 
-Hermes.init()
+Hermes.init(); // Uses default options
+
+// Or with custom options:
+Hermes.init({
+  translationDir: './.hermes',
+  defaultLocale: Langs.ENGLISH_US
+});
 ```
+
+> [!NOTE]
+> `Hermes.init()` reads the pre-built `translations.json` file from the specified directory. Make sure you've run `hermes build` before initializing.
 
 ### Context
 In order to get a translation, you need to fetch the specific context of a language. For example, if you want to get the translation for the `greeting` key in the `en-US` context, you would do the following:
@@ -153,6 +224,10 @@ You can extend the functionality of variables by using expressions. A conditiona
   - `hh`: 2-digit hour
   - `mm`: 2-digit minute
   - `ss`: 2-digit second
+- `%value:plural(one|plural|zero)%`: Handle pluralization based on a numeric value. The third parameter (zero) is optional.
+  - `%count:plural(item|items)%`: Returns "item" if count is 1, "items" otherwise.
+  - `%count:plural(item|items|no items)%`: Returns "item" if count is 1, "items" if count > 1, "no items" if count is 0.
+  - Example: `"You have %count% %count:plural(message|messages|no messages)%"`
 - `%value:switch(case:value)%`: Switch on the value of `value` and return the corresponding case. You can specify multiple cases separated by `|`.
   - `%value:switch(text value:This is a text value)`: If value is *"text value"*, return *"This is a text value"*.
   - `%value:switch(45:The value is 45)%`: If value is *45*, return *"The value is 45"*.
@@ -167,21 +242,10 @@ const ctx = Hermes.getContext('en-US', 'nested');
 ctx.t('key'); // returns "This is a nested key"
 ```
 
-### Missing and Empty Translations
-Hermes provides options for handling missing and empty translations. By default, Hermes will log a warning if a translation is missing or empty. You can change this behavior by setting the `noMissingTranslations` and `noEmptyTranslations` options in the `init()` method. For example:
-```typescript
-import Hermes from '@fca.gg/hermes';
-
-Hermes.init({
-    noMissingTranslations: 'throw',
-    noEmptyTranslations: 'ignore'
-});
-```
-
 ### Nesting files
 You can also nest files in directories to group your translations. For example, you might have the following directory structure:
 ```
-translations/
+locales/
   en-US.json
   fr.json
   en-GB/
@@ -192,7 +256,7 @@ translations/
       feature2.json
 ```
 
-In this case, you can access keys in the nested files by using dot notation:
+When you run `hermes build`, all these files are merged into a single flat structure. You can then access keys in the nested files using dot notation (or the separator defined in your config):
 ```typescript
 import Hermes from '@fca.gg/hermes';
 
