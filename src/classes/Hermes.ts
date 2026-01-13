@@ -80,6 +80,10 @@ export default class Hermes {
         for (const lang of Object.keys(translations) as Array<Langs>) {
             Hermes.instance.translations[lang] = LangData.create(lang, translations[lang]);
         }
+
+        if (Hermes.instance.defaultLocale && !Hermes.instance.translations[Hermes.instance.defaultLocale]) {
+            throw new Error(`Default locale '${Hermes.instance.defaultLocale}' not found in translations`);
+        }
     }
 
     /**
@@ -94,11 +98,11 @@ export default class Hermes {
         if (!Hermes.instance)
             throw new Error('I18n not initialized');
 
-        const langData = Hermes.instance.translations[lang === 'default' ? Hermes.instance.defaultLocale : lang];
-
-        if (!langData) {
-            throw new Error(`Language not found: ${lang}`);
+        if (lang === 'default') {
+            lang = Hermes.instance.defaultLocale;
         }
+
+        const langData = Hermes.instance.translations[lang] ?? Hermes.instance.translations[Hermes.instance.defaultLocale];
 
         return Context.create(langData, basePath);
     }
