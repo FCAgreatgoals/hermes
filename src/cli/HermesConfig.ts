@@ -83,7 +83,7 @@ export function loadConfig(): HermesConfig {
     const configPath = resolve(CONFIG_FILE_NAME);
 
     if (existsSync(configPath)) {
-        const config = require(configPath) as Partial<HermesConfig>;
+        const config = require(configPath).default as Partial<HermesConfig>;
 
         return {
             ...DEFAULT_CONFIG,
