@@ -43,38 +43,18 @@ export const DEFAULT_CONFIG: HermesConfig = {
     checkTranslations: true,
     keys: 'flat',
     fallbackChains: {
-        /* [Langs.INDONESIAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
         [Langs.DANISH]: [Langs.SWEDISH, Langs.NORWEGIAN],
-        /* [Langs.GERMAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
-        [Langs.ENGLISH_UK]: [Langs.ENGLISH_US, Langs.FRENCH],
-        [Langs.ENGLISH_US]: [Langs.ENGLISH_UK, Langs.SPANISH],
-        [Langs.SPANISH]: [Langs.SPANISH_LATAM, Langs.BRAZILIAN_PORTUGUESE],
-        [Langs.SPANISH_LATAM]: [Langs.SPANISH, Langs.BRAZILIAN_PORTUGUESE],
-        /* [Langs.FRENCH]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
-        [Langs.CROATIAN]: [Langs.POLISH, Langs.CZECH],
-        [Langs.ITALIAN]: [Langs.SPANISH, Langs.FRENCH],
-        [Langs.LITHUANIAN]: [Langs.POLISH, Langs.RUSSIAN],
-        [Langs.HUNGARIAN]: [Langs.ROMANIAN, Langs.POLISH],
+        [Langs.ENGLISH_UK]: [Langs.ENGLISH_US],
+        [Langs.ENGLISH_US]: [Langs.ENGLISH_UK],
+        [Langs.SPANISH]: [Langs.SPANISH_LATAM],
+        [Langs.SPANISH_LATAM]: [Langs.SPANISH],
+        [Langs.ITALIAN]: [Langs.SPANISH],
         [Langs.DUTCH]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.GERMAN],
         [Langs.NORWEGIAN]: [Langs.SWEDISH, Langs.DANISH],
-        [Langs.POLISH]: [Langs.UKRAINIAN, Langs.RUSSIAN],
-        [Langs.BRAZILIAN_PORTUGUESE]: [Langs.SPANISH_LATAM, Langs.SPANISH],
-        /* [Langs.ROMANIAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
         [Langs.FINNISH]: [Langs.SWEDISH],
         [Langs.SWEDISH]: [Langs.NORWEGIAN, Langs.DANISH],
-        /* [Langs.VIETNAMESE]: [Langs.ENGLISH_US, Langs.ENGLISH_UK],
-        [Langs.TURKISH]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
-        [Langs.CZECH]: [Langs.POLISH, Langs.GERMAN],
-        [Langs.GREEK]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.ITALIAN],
-        [Langs.BULGARIAN]: [Langs.RUSSIAN],
-        [Langs.RUSSIAN]: [Langs.UKRAINIAN],
-        [Langs.UKRAINIAN]: [Langs.RUSSIAN],
-        /* [Langs.HINDI]: [Langs.ENGLISH_US, Langs.ENGLISH_UK],
-        [Langs.THAI]: [Langs.ENGLISH_US, Langs.ENGLISH_UK], */
         [Langs.CHINESE_CHINA]: [Langs.CHINESE_TAIWAN],
-        /* [Langs.JAPANESE]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.CHINESE_CHINA], */
         [Langs.CHINESE_TAIWAN]: [Langs.CHINESE_CHINA],
-        /* [Langs.KOREAN]: [Langs.ENGLISH_US, Langs.ENGLISH_UK, Langs.JAPANESE], */
         default: [Langs.ENGLISH_US, Langs.ENGLISH_UK]
     }
 };
