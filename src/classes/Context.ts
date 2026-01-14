@@ -17,20 +17,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { Langs } from "../constants";
 import LangData from "./LangData";
 
 export default class Context {
 
-    private readonly data: LangData
-    private readonly basePath: string
+    private readonly data: LangData;
+    private readonly basePath: string;
 
     public static create(data: LangData, basePath: string = '') {
-        return new Context(data, basePath)
+        return new Context(data, basePath);
     }
 
     private constructor(data: LangData, basePath: string) {
-        this.data = data
-        this.basePath = basePath
+        this.data = data;
+        this.basePath = basePath;
+    }
+
+    public get lang(): Langs {
+        return this.data.lang;
     }
 
     /**
@@ -44,13 +49,21 @@ export default class Context {
      * @param object
      * @returns string
      */
-    public translate(key: string, object?: any):string {
-        const value = this.data.getStrings()[(this.basePath !== '') ? `${this.basePath}.${key}`: key]
-        if (!value)
-            throw new Error(`Translation not found for key: ${(this.basePath !== '') ? `${this.basePath}.${key}` : key} in lang: ${this.data.lang}`)
-        return value.resolve(object)
+    public translate(key: string, object?: unknown): string {
+        const fullKey = this.basePath ? `${this.basePath}.${key}` : key;
+        const value = this.data.getStrings()[fullKey];
+
+        if (value)
+            return value.resolve(object);
+
+        throw new Error(`Translation not found for key: ${fullKey} in lang: ${this.data.lang}`);
     }
 
-    public t = this.translate
+    /**
+     * {@link translate} alias
+     */
+    public t(key: string, object?: Record<string, unknown>): string {
+        return this.translate(key, object);
+    }
 
 }

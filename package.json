@@ -1,6 +1,6 @@
 {
   "name": "@fca.gg/hermes",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "A simple and lightweight i18n library for Node.js",
   "author": "FCA <development@fca.gg>",
   "license": "AGPL-3.0",
@@ -8,15 +8,23 @@
     "i18n",
     "internationalization",
     "localization",
+    "locales",
     "formatting",
     "discord",
     "interactions"
   ],
+  "bin": {
+    "hermes": "lib/cli/bin/hermes.js"
+  },
   "main": "lib/index.js",
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "exports": {
-    ".": "./lib/index.js"
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    }
   },
   "files": [
     "lib"
@@ -27,19 +35,25 @@
   },
   "dependencies": {
     "@types/node": "^22.10.1",
+    "commander": "^14.0.0",
     "json5": "^2.2.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.0",
     "@jest/globals": "^29.7.0",
+    "@stylistic/eslint-plugin": "^5.2.2",
     "@types/jest": "^29.5.14",
+    "eslint": "^9.31.0",
     "jest": "^29.7.0",
+    "prettier": "^3.6.2",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.38.0"
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest"
+    "test": "npm run build && npm start build && jest",
+    "start": "node ./lib/cli/bin/hermes.js"
   }
 }
