@@ -22,7 +22,7 @@ describe('Plural', () => {
         expect(formatter.resolve({ key: 1 })).toEqual('singular');
         expect(formatter.resolve({ key: 2 })).toEqual('plural');
         expect(formatter.resolve({ key: 0 })).toEqual('zero');
-    })
+    });
 
     test('resolve_missing', () => {
         const formatter = new PluralFormatter('key', 'singular|plural');

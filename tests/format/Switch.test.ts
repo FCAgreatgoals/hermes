@@ -1,4 +1,4 @@
-import SwitchFormatter from '../../src/classes/format/SwitchFormatter'
+import SwitchFormatter from '../../src/classes/format/SwitchFormatter';
 
 describe('Switch', () => {
 
@@ -20,7 +20,7 @@ describe('Switch', () => {
         const formatter = new SwitchFormatter('key', '1:value1|2:value2');
         expect(formatter.resolve({ key: 1 })).toEqual('value1');
         expect(formatter.resolve({ key: 2 })).toEqual('value2');
-    })
+    });
 
     test('resolve_range', () => {
         const formatter = new SwitchFormatter('key', '1!-3:value1|4-6:value2|10-inf:value3|-inf-0:value4');
@@ -30,7 +30,7 @@ describe('Switch', () => {
         expect(formatter.resolve({ key: -100 })).toEqual('value4');
 
         expect(() => formatter.resolve({ key: 7 })).toThrow();
-    })
+    });
 
     test('resolve_missing', () => {
         const formatter = new SwitchFormatter('key', 'case1:value1|case2:value2');
@@ -72,5 +72,5 @@ describe('Switch', () => {
         expect(formatter.resolve({ key: 8 })).toEqual('value1');
         expect(formatter.resolve({ key: 9 })).toEqual('value2');
         expect(formatter.resolve({ key: 100 })).toEqual('value2');
-    })
+    });
 });
