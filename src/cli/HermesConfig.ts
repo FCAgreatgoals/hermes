@@ -79,11 +79,11 @@ export const DEFAULT_CONFIG: HermesConfig = {
     }
 };
 
-export async function loadHermesConfig(): Promise<HermesConfig> {
+export function loadConfig(): HermesConfig {
     const configPath = resolve(CONFIG_FILE_NAME);
 
     if (existsSync(configPath)) {
-        const config = (await import(configPath)).default as Partial<HermesConfig>;
+        const config = require(configPath) as Partial<HermesConfig>;
 
         return {
             ...DEFAULT_CONFIG,

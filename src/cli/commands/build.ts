@@ -26,7 +26,7 @@ import {
 } from 'fs';
 import { join } from 'path';
 
-import { loadHermesConfig } from '../HermesConfig';
+import { loadConfig } from '../HermesConfig';
 import { collectLocales, loadTranslations, loadTranslationsRaw } from '../utils';
 import { validateTranslations } from '../validations';
 import { TRANSLATIONS_FILE_NAME } from '../../constants';
@@ -36,7 +36,7 @@ export function registerBuildCommand(program: Command) {
         .command('build')
         .description('Builds merged flat translation files per language with fallback support')
         .action(async () => {
-            const config = await loadHermesConfig();
+            const config = loadConfig();
 
             if (existsSync(config.buildDir)) {
                 rmSync(config.buildDir, { recursive: true });
