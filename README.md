@@ -85,6 +85,28 @@ export default {
 > [!IMPORTANT]
 > The build step is **required** before running your application. When you call `Hermes.init()`, it automatically reads the pre-built `translations.json` file from the build directory for optimal performance.
 
+#### Keys Type usage
+
+The `keys` configuration option determines how translation keys are formatted when files are nested in directories.
+
+| Key type | Same file | Directory | File in directory |
+|----------|-----------|-----------|-------------------|
+| `flat` | `.` | `.` | `.` |
+| `path` | `.` | `/` | `.` |
+| `namespaced` | `.` | `/` | `:` |
+
+**Example:** Given the following structure:
+```
+locales/
+  en-US/
+    nested/
+      nested2.json -> { "key": "hello" }
+```
+
+- **flat**: `nested.nested2.key` - Uses dots everywhere
+- **path**: `nested/nested2.key` - Uses slashes for directories, dots for keys within files
+- **namespaced**: `nested/nested2:key` - Uses slashes for directories, colons to separate file from key
+
 ## Usage
 
 ### Initialization
@@ -155,20 +177,12 @@ Each of these files should contain a JSON object with key-value pairs representi
 }
 ```
 
-To initialize Hermes, you will need to import the `Hermes` class and call the `init()` method. This method can take an optional configuration object with the following properties:
-- `translationDir`: The path to the directory containing your built translations. Defaults to `./.hermes`.
-- `defaultLocale`: The default language to use when requesting translations for 'default'. Defaults to `en-US`.
+To initialize Hermes, you will need to import the `Hermes` class and call the `init()` method.
 
 ```typescript
 import Hermes from '@fca.gg/hermes';
 
-Hermes.init(); // Uses default options
-
-// Or with custom options:
-Hermes.init({
-  translationDir: './.hermes',
-  defaultLocale: Langs.ENGLISH_US
-});
+Hermes.init();
 ```
 
 > [!NOTE]
