@@ -45,29 +45,31 @@ export class FormattedString {
     public static create(string: string): FormattedString {
         const parts: (string | StringFormatter)[] = [];
         let index = 0;
-        while (index < string.length) {
-            const start = string.indexOf('%', index);
+        let workingString = string; // Use a copy to avoid mutating the original
+        
+        while (index < workingString.length) {
+            const start = workingString.indexOf('%', index);
             if (start === -1) {
-                parts.push(string.substring(index));
+                parts.push(workingString.substring(index));
                 break;
             }
-            parts.push(string.substring(index, start));
-            if (string[start - 1] === '\\') {
+            parts.push(workingString.substring(index, start));
+            if (workingString[start - 1] === '\\') {
                 parts[parts.length - 1] = (<string>parts[parts.length - 1]).slice(0, -1);
                 parts.push('%');
                 index = start + 1;
                 continue;
             }
-            let end = string.indexOf('%', start + 1);
-            while (end !== -1 && string[end - 1] === '\\') {
-                string = string.slice(0, end - 1) + string.slice(end);
-                end = string.indexOf('%', end + 1);
+            let end = workingString.indexOf('%', start + 1);
+            while (end !== -1 && workingString[end - 1] === '\\') {
+                workingString = workingString.slice(0, end - 1) + workingString.slice(end);
+                end = workingString.indexOf('%', end + 1);
             }
             if (end === -1) {
-                parts.push(string.substring(start));
+                parts.push(workingString.substring(start));
                 throw new Error('No closing marker found');
             }
-            const expression = string.substring(start + 1, end);
+            const expression = workingString.substring(start + 1, end);
             parts.push(this.parseExpression(expression));
             index = end + 1;
         }

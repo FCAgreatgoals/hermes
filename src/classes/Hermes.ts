@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 
 import { LangsKeys, LocalizedObject } from '../types';
 import { Langs, DEFAULT_TRANSLATION_DIR, TRANSLATIONS_FILE_NAME, langToLocale } from '../constants';
@@ -66,7 +66,24 @@ export default class Hermes {
 
         Hermes.instance = new Hermes(config.fallbackChains.default[0]);
 
-        const translations = JSON.parse(readFileSync(`${config.buildDir}/${TRANSLATIONS_FILE_NAME}`, 'utf-8'));
+        const translationsPath = `${config.buildDir}/${TRANSLATIONS_FILE_NAME}`;
+        
+        // Check if translations file exists
+        if (!existsSync(translationsPath)) {
+            throw new Error(
+                `Translations file not found at '${translationsPath}'. ` +
+                `Please run 'hermes build' first to generate the translations file.`
+            );
+        }
+
+        let translations;
+        try {
+            translations = JSON.parse(readFileSync(translationsPath, 'utf-8'));
+        } catch (error) {
+            throw new Error(
+                `Failed to parse translations file at '${translationsPath}': ${(error as Error).message}`
+            );
+        }
 
         for (const lang of Object.keys(translations) as Array<Langs>) {
             Hermes.instance.translations[lang] = LangData.create(lang, translations[lang]);
@@ -122,6 +139,19 @@ export default class Hermes {
             throw new Error(`Localized object not found for key: ${key}`);
 
         return object;
+    }
+
+    /**
+     * @method getAvailableLanguages
+     * @description Get list of available languages
+     * 
+     * @returns Array of available language keys
+     */
+    public static getAvailableLanguages(): Langs[] {
+        if (!Hermes.instance)
+            throw new Error('I18n not initialized');
+        
+        return Object.keys(Hermes.instance.translations) as Langs[];
     }
 
     public static getLocale(lang: Langs): string {

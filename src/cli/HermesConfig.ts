@@ -63,16 +63,39 @@ export function loadConfig(): HermesConfig {
     const configPath = resolve(CONFIG_FILE_NAME);
 
     if (existsSync(configPath)) {
-        const config = require(configPath).default as Partial<HermesConfig>;
+        try {
+            // Try to load as ES module first
+            delete require.cache[require.resolve(configPath)];
+            const config = require(configPath).default as Partial<HermesConfig>;
 
-        return {
-            ...DEFAULT_CONFIG,
-            ...config,
-            fallbackChains: {
-                ...DEFAULT_CONFIG.fallbackChains,
-                ...config.fallbackChains
+            return {
+                ...DEFAULT_CONFIG,
+                ...config,
+                fallbackChains: {
+                    ...DEFAULT_CONFIG.fallbackChains,
+                    ...config.fallbackChains
+                }
+            };
+        } catch (error) {
+            // If ES module loading fails, try CommonJS
+            try {
+                delete require.cache[require.resolve(configPath)];
+                const config = require(configPath) as Partial<HermesConfig>;
+
+                return {
+                    ...DEFAULT_CONFIG,
+                    ...config,
+                    fallbackChains: {
+                        ...DEFAULT_CONFIG.fallbackChains,
+                        ...config.fallbackChains
+                    }
+                };
+            } catch (secondError) {
+                throw new Error(
+                    `Failed to load config file at '${configPath}': ${(error as Error).message}`
+                );
             }
-        };
+        }
     }
 
     return DEFAULT_CONFIG;
