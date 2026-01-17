@@ -19,7 +19,7 @@ describe('FormattedString_Init_Test', () => {
         expect(FormattedString.create('Hello %boolValue:if(false)%').resolve({ boolValue: false })).toBe('Hello ');
         expect(FormattedString.create('Hello %boolValue:if(true)%').resolve({ boolValue: true })).toBe('Hello true');
         expect(FormattedString.create("Hello %date:date(YYYY)%").resolve({
-            date: new Date('2021-01-01')
+            date: new Date(2021, 0, 1) // Use local date constructor instead of ISO string
         })).toBe('Hello 2021');
         expect(FormattedString.create("Hello %count:plural(test|test2|test3)%").resolve({count: 1})).toBe('Hello test');
         expect(FormattedString.create("Hello %count:plural(test|test2|test3)%").resolve({count: 2})).toBe('Hello test2');

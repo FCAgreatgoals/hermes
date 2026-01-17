@@ -60,6 +60,18 @@ export default class Context {
     }
 
     /**
+     * @method has
+     * @description Check if a translation key exists
+     * 
+     * @param key Translation key to check
+     * @returns true if key exists, false otherwise
+     */
+    public has(key: string): boolean {
+        const fullKey = this.basePath ? `${this.basePath}.${key}` : key;
+        return fullKey in this.data.getStrings();
+    }
+
+    /**
      * {@link translate} alias
      */
     public t(key: string, object?: Record<string, unknown>): string {

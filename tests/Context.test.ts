@@ -45,4 +45,23 @@ describe('Context_Init_Test', () => {
         expect(() => ctx.t('test')).toThrow();
     });
 
+    test('should check if translation key exists', () => {
+        const translations = JSON.parse(readFileSync('./.hermes/translations.json', 'utf-8'));
+        const data = LangData.create(Langs.ENGLISH_US, translations[Langs.ENGLISH_US]);
+        const ctx = Context.create(data);
+        
+        expect(ctx.has('hello.world')).toBe(true);
+        expect(ctx.has('test.nested.key')).toBe(true);
+        expect(ctx.has('nonexistent')).toBe(false);
+    });
+
+    test('should check if translation key exists with base path', () => {
+        const translations = JSON.parse(readFileSync('./.hermes/translations.json', 'utf-8'));
+        const data = LangData.create(Langs.ENGLISH_US, translations[Langs.ENGLISH_US]);
+        const ctx = Context.create(data, 'hello');
+        
+        expect(ctx.has('world')).toBe(true);
+        expect(ctx.has('nonexistent')).toBe(false);
+    });
+
 });
