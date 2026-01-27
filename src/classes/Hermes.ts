@@ -69,6 +69,11 @@ export default class Hermes {
         const translations = JSON.parse(readFileSync(`${config.buildDir}/${TRANSLATIONS_FILE_NAME}`, 'utf-8'));
 
         for (const lang of Object.keys(translations) as Array<Langs>) {
+            if (typeof translations[lang] === 'string') {
+                Hermes.instance.translations[lang] = Hermes.instance.translations[translations[lang] as Langs];
+                continue;
+            }
+
             Hermes.instance.translations[lang] = LangData.create(lang, translations[lang]);
         }
 

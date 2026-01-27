@@ -27,7 +27,7 @@ import {
 import { join } from 'path';
 
 import { loadConfig } from '../HermesConfig';
-import { collectLocales, loadTranslations, loadTranslationsRaw } from '../utils';
+import { collectLocales, findTotalFallbackRef, loadTranslations, loadTranslationsRaw } from '../utils';
 import { validateTranslations } from '../validations';
 import { TRANSLATIONS_FILE_NAME } from '../../constants';
 
@@ -46,20 +46,34 @@ export function registerBuildCommand(program: Command) {
 
             const locales = collectLocales(config);
 
-            if (config.checkTranslations) {
-                const rawTranslations: Record<string, Record<string, string>> = {};
+            const rawTranslations: Record<string, Record<string, string>> = {};
+            const totalFallbackRefs: Record<string, string> = {};
 
-                for (const locale of locales) {
-                    rawTranslations[locale] = loadTranslationsRaw(locale, config);
+            for (const locale of locales) {
+                const raw = loadTranslationsRaw(locale, config);
+                const ref = findTotalFallbackRef(locale, raw, config, locales);
+
+                if (ref) {
+                    totalFallbackRefs[locale] = ref;
+                } else {
+                    rawTranslations[locale] = raw;
                 }
+            }
 
+            if (config.checkTranslations) {
                 validateTranslations(rawTranslations);
             }
 
-            const translations: Record<string, Record<string, string>> = {};
+            const translations: Record<string, Record<string, string> | string> = {};
 
             for (const locale of locales) {
-                translations[locale] = loadTranslations(locale, config);
+                if (!totalFallbackRefs[locale]) {
+                    translations[locale] = loadTranslations(locale, config);
+                }
+            }
+
+            for (const [locale, ref] of Object.entries(totalFallbackRefs)) {
+                translations[locale] = ref;
             }
 
             writeFileSync(join(config.buildDir, TRANSLATIONS_FILE_NAME), JSON.stringify(translations));
