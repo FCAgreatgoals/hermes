@@ -148,3 +148,23 @@ export function loadTranslations(locale: string, config: HermesConfig, visited =
 
     return merged;
 }
+
+export function findTotalFallbackRef(locale: string, raw: Record<string, string>, config: HermesConfig, availableLocales: string[]): string | null {
+    if (Object.keys(raw).length > 0) return null;
+
+    const localeFallbacks = config.fallbackChains[locale] || [];
+    const defaultFallbacks = config.fallbackChains.default || [];
+
+    const fallbacks = [
+        ...localeFallbacks,
+        ...defaultFallbacks.filter(lang => lang !== locale && !localeFallbacks.includes(lang))
+    ];
+
+    for (const fallback of fallbacks) {
+        if (availableLocales.includes(fallback)) {
+            return fallback;
+        }
+    }
+
+    return null;
+}
