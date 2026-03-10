@@ -1,7 +1,7 @@
 /**
- * This file is part of Hermes (https://github.com/FCAgreatgoals/hermes).
+ * This file is part of @fca.gg/hermes (https://github.com/FCAgreatgoals/hermes).
  *
- * Copyright (C) 2025 SAS French Community Agency
+ * Copyright (C) 2026 SAS French Community Agency
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,6 +15,12 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Additional permission under the AGPL-3.0 section 7:
+ * You may use this library as a dependency in your own application without
+ * your application being subject to the AGPL-3.0. Only modifications to
+ * @fca.gg/hermes itself must be made publicly available. See LINKING_EXCEPTION.md
+ * for full details.
  */
 
 export default class PluralFormatter {

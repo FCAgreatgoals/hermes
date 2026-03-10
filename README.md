@@ -294,7 +294,14 @@ const obj = Hermes.getLocalizedObject('key');
 ```
 
 ## License
-This project is licensed under the AGPL v3 License - see the [LICENSE](LICENSE) file for details.
+
+This project is licensed under the **AGPL-3.0** with a Linking Exception — see the [LICENSE](LICENSE) file for the full license text.
 
 > We chose the AGPL to ensure that Hermes remains truly open source and contributive.
-If you use or adapt Hermes, even over a network, you must share your modifications. That’s the spirit of the project — building useful tools together, in the open.
+> If you fork or modify Hermes itself — even to run it over a network — you must share your modifications. That's the spirit of the project: building useful tools together, in the open.
+
+### Linking Exception
+
+If you simply use Hermes as a dependency in your own project (e.g. `npm install hermes`), your application is **not** required to be open source. Only modifications to Hermes itself are subject to the AGPL.
+
+See [LINKING_EXCEPTION.md](LINKING_EXCEPTION.md) for the full exception text.
