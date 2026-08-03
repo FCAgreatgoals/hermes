@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * This file is part of @fca.gg/hermes (https://github.com/FCAgreatgoals/hermes).
  *
@@ -22,8 +23,6 @@
  * @fca.gg/hermes itself must be made publicly available. See LINKING_EXCEPTION.md
  * for full details.
  */
-
-#!/usr/bin/env node
 
 import { Command } from 'commander';
 import { registerBuildCommand } from '../commands/build';
