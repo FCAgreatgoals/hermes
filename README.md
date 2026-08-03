@@ -302,6 +302,6 @@ This project is licensed under the **AGPL-3.0** with a Linking Exception — see
 
 ### Linking Exception
 
-If you simply use Hermes as a dependency in your own project (e.g. `npm install hermes`), your application is **not** required to be open source. Only modifications to Hermes itself are subject to the AGPL.
+If you simply use Hermes as a dependency in your own project (e.g. `npm install @fca.gg/hermes`), your application is **not** required to be open source. Only modifications to Hermes itself are subject to the AGPL.
 
 See [LINKING_EXCEPTION.md](LINKING_EXCEPTION.md) for the full exception text.
