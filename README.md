@@ -74,6 +74,8 @@ export default {
   buildDir: './.hermes',           // Output directory for built translations
   checkTranslations: true,         // Validate translations during build
   keys: 'flat',                    // Key format: 'flat' (dot notation), 'path' (/), or 'namespaced' (:)
+  sourceLocale: null,              // Language everything is written in (see Source tracking)
+  completeLocales: null,           // Languages expected to hold every key (default: all of them)
   fallbackChains: {
     'en-GB': ['en-US', 'fr'],
     'es-419': ['es-ES'],
@@ -106,6 +108,57 @@ locales/
 - **flat**: `nested.nested2.key` - Uses dots everywhere
 - **path**: `nested/nested2.key` - Uses slashes for directories, dots for keys within files
 - **namespaced**: `nested/nested2:key` - Uses slashes for directories, colons to separate file from key
+
+## Source tracking
+
+A missing translation is easy to spot: nothing is there. An **outdated** one is not — the string is
+present, reads fine, and no longer says what the source says. Nothing in the files themselves can
+tell it apart from an up-to-date translation.
+
+Set a `sourceLocale` and Hermes records, for every translated key, a fingerprint of the source
+string it was translated from. When the source moves, every language that had translated it is
+flagged.
+
+```javascript
+export default {
+  sourceLocale: 'fr',
+  completeLocales: ['en-US', 'de', 'es-ES']
+};
+```
+
+`completeLocales` names the languages expected to hold every key; it defaults to all of them.
+Languages left out are treated as deliberately partial: they are never reported as missing anything.
+Source tracking still applies to them — a partial language that translated a string is told when
+that string moves.
+
+### Commands
+
+```bash
+hermes todo <locale>          # what the locale still needs, as JSON
+hermes lock [locales...]      # record the source fingerprints, all locales by default
+hermes lock <locale> --keys a,b   # accept a source edit on specific keys without retranslating
+hermes check                  # same checks as build, with a non-zero exit code for CI
+```
+
+`hermes build` reports the same findings as warnings, outdated ones first: a missing translation
+falls back visibly, an outdated one is served to users as if it were current.
+
+`hermes todo` gives outdated entries with both the new source and the translation currently in
+place, since a retouch is cheaper than a rewrite.
+
+### The lock file
+
+Fingerprints live in `<localesDir>/.hermes-lock.json`, and it belongs in version control.
+
+It is written by `hermes lock` only, **never** by `hermes build`. A build that recorded fingerprints
+would mark every stale translation as current on its first CI run, and nothing would ever be flagged
+again. Run `hermes lock` when a translation pass is done, in the same commit as the translations it
+describes: a lock that drifts from the files reports work that is already finished, or hides work
+that is not.
+
+A cosmetic edit to the source — a typo, an accent — flags every language. That is usually right,
+since they may need the same fix. When it is not, `hermes lock <locale> --keys <keys>` accepts the
+change on those keys alone and leaves the rest of the report untouched.
 
 ## Usage
 

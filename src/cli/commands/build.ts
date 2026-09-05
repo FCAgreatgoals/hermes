@@ -29,7 +29,7 @@ import { join } from 'path';
 import { loadConfig } from '../HermesConfig';
 import { collectLocales, findTotalFallbackRef, loadTranslations, loadTranslationsRaw } from '../utils';
 import { validateTranslations } from '../validations';
-import { TRANSLATIONS_FILE_NAME } from '../../constants';
+import { Langs, TRANSLATIONS_FILE_NAME } from '../../constants';
 
 export function registerBuildCommand(program: Command) {
     program
@@ -61,7 +61,7 @@ export function registerBuildCommand(program: Command) {
             }
 
             if (config.checkTranslations) {
-                validateTranslations(rawTranslations);
+                validateTranslations(rawTranslations as Partial<Record<Langs, Record<string, string>>>, config);
             }
 
             const translations: Record<string, Record<string, string> | string> = {};
