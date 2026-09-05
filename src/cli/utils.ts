@@ -46,6 +46,24 @@ export function collectLocales(config: HermesConfig): string[] {
     return files;
 }
 
+/**
+ * Every locale's flat translations, aliases left out: a locale whose file is just a pointer to
+ * another one has nothing of its own to check or to lock.
+ */
+export function collectRawTranslations(config: HermesConfig): Record<string, Record<string, string>> {
+    const locales = collectLocales(config);
+    const raw: Record<string, Record<string, string>> = {};
+
+    for (const locale of locales) {
+        const translations = loadTranslationsRaw(locale, config);
+
+        if (!findTotalFallbackRef(locale, translations, config, locales))
+            raw[locale] = translations;
+    }
+
+    return raw;
+}
+
 export function flattenTranslations(obj: RecursiveRecord, keysType: HermesConfig['keys'], prefix = '', source = ''): Record<string, string> {
     let result: Record<string, string> = {};
 

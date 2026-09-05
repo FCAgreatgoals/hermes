@@ -35,6 +35,20 @@ export interface HermesConfig {
     checkTranslations: boolean
     keys: KeysType
     fallbackChains: Record<string, Langs[]>
+    /**
+     * Language everything is written in. Set it to compare translations against a single source
+     * rather than against each other, and to have `hermes build` report translations whose source
+     * has changed since. Left unset, every language is checked against the union of all the others,
+     * and no source tracking happens.
+     */
+    sourceLocale: string | null
+    /**
+     * Languages expected to hold every source key. Defaults to all of them; name a subset when some
+     * languages are deliberately partial, so that missing keys are only reported where they are a
+     * problem. Source tracking still applies everywhere: a partial language that translated a
+     * string is told when that string moves.
+     */
+    completeLocales: string[] | null
 }
 
 export const DEFAULT_CONFIG: HermesConfig = {
@@ -42,6 +56,8 @@ export const DEFAULT_CONFIG: HermesConfig = {
     buildDir: DEFAULT_TRANSLATION_DIR,
     checkTranslations: true,
     keys: 'flat',
+    sourceLocale: null,
+    completeLocales: null,
     fallbackChains: {
         [Langs.DANISH]: [Langs.SWEDISH, Langs.NORWEGIAN],
         [Langs.ENGLISH_UK]: [Langs.ENGLISH_US],
