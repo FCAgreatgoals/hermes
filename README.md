@@ -135,7 +135,7 @@ that string moves.
 
 ```bash
 hermes todo <locale>          # what the locale still needs, as JSON
-hermes lock [locales...]      # record the source fingerprints, all locales by default
+hermes lock [locales...]      # baseline a project or a new language, all locales by default
 hermes lock <locale> --keys a,b   # accept a source edit on specific keys without retranslating
 hermes check                  # same checks as build, with a non-zero exit code for CI
 ```
@@ -148,13 +148,26 @@ place, since a retouch is cheaper than a rewrite.
 
 ### The lock file
 
-Fingerprints live in `<localesDir>/.hermes-lock.json`, and it belongs in version control.
+Fingerprints live in `<localesDir>/.hermes-lock.json`, and it belongs in version control. Each entry
+holds two of them, `source:target`: what the translation was made from, and the translation itself.
 
-It is written by `hermes lock` only, **never** by `hermes build`. A build that recorded fingerprints
-would mark every stale translation as current on its first CI run, and nothing would ever be flagged
-again. Run `hermes lock` when a translation pass is done, in the same commit as the translations it
-describes: a lock that drifts from the files reports work that is already finished, or hides work
-that is not.
+```json
+{ "de": { "settings:antiraid.closeDm": "a1b2c3d4e5f6:9876543210ab" } }
+```
+
+The second fingerprint is what lets a build tell a regression from a fix:
+
+- source moved, translation untouched → nobody has answered yet, the key stays flagged
+- both moved → someone answered, and `hermes build` refreshes the entry on its own
+
+So a translation pass needs no follow-up command. Commit the refreshed lock along with the
+translations; `hermes check` reads it as committed and never writes, so a forgotten lock fails CI
+rather than passing quietly.
+
+`hermes lock` remains for two things: **baselining** a project or a new language, and accepting a
+source edit without retranslating. A build only ever refreshes locales the lock already covers —
+fingerprinting an unlocked project would mark all of it as current on the first run, stale
+translations included, and nothing would be flagged again.
 
 A cosmetic edit to the source — a typo, an accent — flags every language. That is usually right,
 since they may need the same fix. When it is not, `hermes lock <locale> --keys <keys>` accepts the

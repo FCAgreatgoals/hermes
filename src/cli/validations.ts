@@ -81,7 +81,7 @@ function report(audits: Record<string, LocaleAudit>, sourceLocale: string): void
         audits,
         'outdated',
         `[i18n] Outdated translations (${sourceLocale} changed since):`,
-        'run `hermes todo <locale>` to get them, and `hermes lock <locale>` once retranslated'
+        'run `hermes todo <locale>` for the strings; the lock clears itself once they are translated'
     );
     printSection(audits, 'missing', '[i18n] Missing translations:');
     printSection(audits, 'empty', '[i18n] Empty translations:');
