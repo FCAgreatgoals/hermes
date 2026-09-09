@@ -14,6 +14,7 @@ export const DEFAULT_TRANSLATION_DIR = './.hermes';
 export const DEFAULT_LOCALES_DIR = 'locales';
 export const CONFIG_FILE_NAME = 'hermes.config.js';
 export const TRANSLATIONS_FILE_NAME = 'translations.json';
+export const LOCK_FILE_NAME = '.hermes-lock.json';
 
 // Key separators
 export const PATH_SEPARATORS = {

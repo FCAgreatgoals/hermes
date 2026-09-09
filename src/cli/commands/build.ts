@@ -29,7 +29,8 @@ import { join } from 'path';
 import { loadConfig } from '../HermesConfig';
 import { collectLocales, findTotalFallbackRef, loadTranslations, loadTranslationsRaw } from '../utils';
 import { validateTranslations } from '../validations';
-import { TRANSLATIONS_FILE_NAME } from '../../constants';
+import { readLock, refreshLock, writeLock } from '../lock';
+import { Langs, TRANSLATIONS_FILE_NAME } from '../../constants';
 
 export function registerBuildCommand(program: Command) {
     program
@@ -60,8 +61,19 @@ export function registerBuildCommand(program: Command) {
                 }
             }
 
+            const source = config.sourceLocale ? rawTranslations[config.sourceLocale] : undefined;
+
+            // Before reporting, not after: a translation fixed since the last build has answered its
+            // regression, and repeating it would train everyone to scroll past the whole section.
+            if (config.sourceLocale && source) {
+                const lock = readLock(config);
+
+                if (refreshLock(lock, rawTranslations, source, config.sourceLocale))
+                    writeLock(config, lock);
+            }
+
             if (config.checkTranslations) {
-                validateTranslations(rawTranslations);
+                validateTranslations(rawTranslations as Partial<Record<Langs, Record<string, string>>>, config);
             }
 
             const translations: Record<string, Record<string, string> | string> = {};
