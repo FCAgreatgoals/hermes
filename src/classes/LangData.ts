@@ -22,18 +22,18 @@ import { RecursiveRecord } from "../types";
 import { FormattedString } from "./format/FormattedString";
 
 /**
- * A translation as stored: the raw text until a placeholder string is first used, then its parsed
- * form. Text without placeholders never gets parsed, it resolves to itself.
+ * Text without placeholders is kept as is and resolves to itself. The rest is a FormattedString that
+ * parses itself on first use.
  */
 export type Translation = string | FormattedString;
 
 export default class LangData {
     public readonly lang: Langs;
 
-    private readonly strings: Map<string, Translation>;
+    private readonly strings: Record<string, Translation>;
     private fallbacks: readonly LangData[] = [];
 
-    private constructor(lang: Langs, strings: Map<string, Translation>) {
+    private constructor(lang: Langs, strings: Record<string, Translation>) {
         this.lang = lang;
         this.strings = strings;
     }
@@ -46,14 +46,14 @@ export default class LangData {
         if (!Object.values(Langs).includes(lang))
             throw new Error(`Invalid lang: ${lang}`);
 
-        const strings = new Map<string, Translation>();
+        const strings: Record<string, Translation> = Object.create(null);
 
         const keyParts: string[] = [];
         const parseObject = (obj: RecursiveRecord) => {
             for (const key in obj) {
                 const value = obj[key];
                 keyParts.push(key);
-                if (typeof value === 'object') parseObject(value); else strings.set(keyParts.join('.'), value);
+                if (typeof value === 'object') parseObject(value); else strings[keyParts.join('.')] = value.includes('%') ? FormattedString.lazy(value) : value;
                 keyParts.pop();
             }
         };
@@ -67,11 +67,11 @@ export default class LangData {
     }
 
     public get(key: string): Translation | undefined {
-        const own = this.getOwn(key);
+        const own = this.strings[key];
         if (own !== undefined) return own;
 
         for (const fallback of this.fallbacks) {
-            const value = fallback.getOwn(key);
+            const value = fallback.strings[key];
             if (value !== undefined) return value;
         }
 
@@ -80,22 +80,7 @@ export default class LangData {
 
     public resolve(key: string, object?: unknown): string | undefined {
         const value = this.get(key);
-        if (value === undefined || typeof value === 'string') return value;
-        return value.resolve(object);
-    }
-
-    private getOwn(key: string): Translation | undefined {
-        const value = this.strings.get(key);
-        if (typeof value !== 'string' || !value.includes('%')) return value;
-
-        let parsed: FormattedString;
-        try {
-            parsed = FormattedString.create(value);
-        } catch (e) {
-            throw new Error(`Invalid translation "${key}" in lang ${this.lang}: ${(e as Error).message}`);
-        }
-        this.strings.set(key, parsed);
-        return parsed;
+        return typeof value === 'object' ? value.resolve(object) : value;
     }
 
     /**
@@ -105,7 +90,7 @@ export default class LangData {
         const result: Record<string, FormattedString> = {};
 
         for (const data of [...this.fallbacks].reverse().concat(this)) {
-            for (const [key, value] of data.strings)
+            for (const [key, value] of Object.entries(data.strings))
                 result[key] = typeof value === 'string' ? FormattedString.create(value) : value;
         }
 

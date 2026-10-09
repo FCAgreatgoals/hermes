@@ -53,7 +53,8 @@ describe('RuntimeFallback_Test', () => {
 
     test('invalid_placeholder_names_key', () => {
         const en = LangData.create(Langs.ENGLISH_US, { 'bad': 'oops %n' });
-        expect(() => en.get('bad')).toThrow('Invalid translation "bad" in lang en-US');
+        expect(en.get('bad')).toBeInstanceOf(FormattedString);
+        expect(() => Context.create(en).t('bad', { n: 1 })).toThrow('Invalid translation "oops %n": No closing marker found');
     });
 
     test('nested_input_is_flattened', () => {

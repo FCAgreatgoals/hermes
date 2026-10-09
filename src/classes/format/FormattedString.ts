@@ -36,13 +36,39 @@ export class StringFormatter {
 
 export class FormattedString {
 
-    private parts: (string | StringFormatter)[] = [];
+    private parts: (string | StringFormatter)[] | null;
+    private raw: string | null;
 
-    private constructor(parts: (string | StringFormatter)[]) {
+    private constructor(parts: (string | StringFormatter)[] | null, raw: string | null) {
         this.parts = parts;
+        this.raw = raw;
     }
 
     public static create(string: string): FormattedString {
+        return new FormattedString(FormattedString.parse(string), null);
+    }
+
+    /**
+     * Keeps the text and parses it on first {@link resolve}: most strings of a large catalogue are
+     * never displayed, and their parsed form outweighs the text several times over.
+     */
+    public static lazy(string: string): FormattedString {
+        return new FormattedString(null, string);
+    }
+
+    private compile(): (string | StringFormatter)[] {
+        let parts: (string | StringFormatter)[];
+        try {
+            parts = FormattedString.parse(this.raw as string);
+        } catch (e) {
+            throw new Error(`Invalid translation "${this.raw}": ${(e as Error).message}`);
+        }
+        this.parts = parts;
+        this.raw = null;
+        return parts;
+    }
+
+    private static parse(string: string): (string | StringFormatter)[] {
         const parts: (string | StringFormatter)[] = [];
         let index = 0;
         while (index < string.length) {
@@ -72,7 +98,7 @@ export class FormattedString {
             index = end + 1;
         }
 
-        return new FormattedString(parts);
+        return parts;
     }
 
     private static parseExpression(expression: string): StringFormatter {
@@ -98,14 +124,16 @@ export class FormattedString {
     }
 
     public isEmpty(): boolean {
-        return (this.parts.length <= 1 && (this.parts[0] === undefined || this.parts[0] === ''));
+        const parts = this.parts ?? this.compile();
+        return (parts.length <= 1 && (parts[0] === undefined || parts[0] === ''));
     }
 
     public resolve(object: unknown): string {
+        const parts = this.parts ?? this.compile();
         let result = '';
-        if (this.parts.length > 1 && object === undefined)
+        if (parts.length > 1 && object === undefined)
             throw new Error('An object is required to resolve the string');
-        for (const part of this.parts) {
+        for (const part of parts) {
             if (typeof part === 'object') {
                 try {
                     result += part.resolve(object);
