@@ -30,7 +30,7 @@ describe('BuildTranslations_Test', () => {
     };
 
     test('drops_what_fallbacks_already_give', () => {
-        const ok = { ...raw, fr: { a: 'A fr', b: 'B', c: 'C fr' } };
+        const ok: Record<string, Record<string, string>> = { ...raw, fr: { a: 'A fr', b: 'B', c: 'C fr' } };
         jest.spyOn(utils, 'loadTranslationsRaw').mockImplementation(locale => ({ ...(ok[locale] ?? {}) }));
         const built = buildTranslations(Object.keys(ok), ok, {}, config);
 
