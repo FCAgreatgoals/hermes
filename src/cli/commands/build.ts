@@ -27,10 +27,13 @@ import {
 import { join } from 'path';
 
 import { loadConfig } from '../HermesConfig';
-import { collectLocales, findTotalFallbackRef, loadTranslations, loadTranslationsRaw } from '../utils';
+import { collectLocales, findTotalFallbackRef, loadTranslations, loadTranslationsRaw, resolutionOrder } from '../utils';
 import { validateTranslations } from '../validations';
 import { readLock, refreshLock, writeLock } from '../lock';
 import { Langs, TRANSLATIONS_FILE_NAME } from '../../constants';
+import { BuiltTranslations } from '../../types';
+import { FormattedString } from '../../classes/format/FormattedString';
+import { HermesConfig } from '../HermesConfig';
 
 export function registerBuildCommand(program: Command) {
     program
@@ -76,20 +79,90 @@ export function registerBuildCommand(program: Command) {
                 validateTranslations(rawTranslations as Partial<Record<Langs, Record<string, string>>>, config);
             }
 
-            const translations: Record<string, Record<string, string> | string> = {};
+            const output = buildTranslations(locales, rawTranslations, totalFallbackRefs, config);
 
-            for (const locale of locales) {
-                if (!totalFallbackRefs[locale]) {
-                    translations[locale] = loadTranslations(locale, config);
-                }
-            }
-
-            for (const [locale, ref] of Object.entries(totalFallbackRefs)) {
-                translations[locale] = ref;
-            }
-
-            writeFileSync(join(config.buildDir, TRANSLATIONS_FILE_NAME), JSON.stringify(translations));
+            writeFileSync(join(config.buildDir, TRANSLATIONS_FILE_NAME), JSON.stringify(output));
 
             console.log(`✅ Built ${locales.join(', ')}`);
         });
 }
+
+/**
+ * Keeps, for each language, only the strings its fallbacks would not already give, so that the
+ * runtime shares one instance where it used to hold one copy per language. Every key still resolves
+ * to the text the fully merged build gave it: that is checked here rather than assumed.
+ */
+export function buildTranslations(
+    locales: string[],
+    raw: Record<string, Record<string, string>>,
+    aliases: Record<string, string>,
+    config: HermesConfig
+): BuiltTranslations {
+    const concrete = locales.filter(locale => !aliases[locale]);
+    const orders: Record<string, string[]> = {};
+    const kept: Record<string, Record<string, string>> = {};
+
+    const expected: Record<string, Record<string, string>> = {};
+
+    for (const locale of concrete) {
+        expected[locale] = loadTranslations(locale, config);
+        orders[locale] = resolutionOrder(locale, config).filter(lang => raw[lang]);
+        kept[locale] = { ...raw[locale] };
+    }
+
+    const lookup = (locale: string, key: string): string | undefined => {
+        if (Object.hasOwn(kept[locale], key)) return kept[locale][key];
+        for (const fallback of orders[locale]) if (Object.hasOwn(kept[fallback], key)) return kept[fallback][key];
+        return undefined;
+    };
+
+    // Fallback chains can loop (en-US and en-GB point at each other): the default language stays
+    // whole so that it is the one the others lean on, not the reverse.
+    const anchor = config.fallbackChains.default?.[0];
+
+    for (const locale of concrete) {
+        if (locale === anchor) continue;
+
+        for (const key of Object.keys(kept[locale])) {
+            const value = kept[locale][key];
+            delete kept[locale][key];
+            if (lookup(locale, key) !== value) kept[locale][key] = value;
+        }
+    }
+
+    // A string dropped from one language may have been what another one fell back to.
+    for (let changed = true; changed;) {
+        changed = false;
+
+        for (const locale of concrete) {
+            for (const [key, value] of Object.entries(expected[locale])) {
+                if (lookup(locale, key) === value) continue;
+                kept[locale][key] = value;
+                changed = true;
+            }
+        }
+    }
+
+    const errors: string[] = [];
+    const langs: BuiltTranslations['langs'] = {};
+
+    for (const locale of concrete) {
+        for (const [key, value] of Object.entries(kept[locale])) {
+            if (!value.includes('%')) continue;
+            try {
+                FormattedString.create(value);
+            } catch (e) {
+                errors.push(`${locale} ${key}: ${(e as Error).message}`);
+            }
+        }
+
+        langs[locale] = { fallbacks: orders[locale], strings: kept[locale] };
+    }
+
+    if (errors.length) throw new Error(`Invalid translations:\n${errors.join('\n')}`);
+
+    for (const [locale, ref] of Object.entries(aliases)) langs[locale] = ref;
+
+    return { $hermes: 2, langs };
+}
+

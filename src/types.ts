@@ -26,3 +26,20 @@ export type LocalizedObject = Partial<Record<Langs, string>>;
 export interface RecursiveRecord {
     [key: string]: string | RecursiveRecord;
 }
+
+/**
+ * What `hermes build` writes. Each language holds only the strings it owns, plus the languages to
+ * look into, in order, for the rest. A string is a whole-language alias.
+ */
+export interface BuiltTranslations {
+    $hermes: 2
+    langs: Record<string, string | {
+        fallbacks: string[]
+        strings: Record<string, string>
+    }>
+}
+
+export function isBuiltTranslations(value: unknown): value is BuiltTranslations {
+    return typeof value === 'object' && value !== null && (value as { $hermes?: unknown }).$hermes === 2;
+}
+

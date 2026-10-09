@@ -12,7 +12,7 @@ describe('LangData_Init_Test', () => {
 
     test('valid_lang', () => {
         const translations = JSON.parse(readFileSync('./.hermes/translations.json', 'utf-8'));
-        const res = LangData.create(Langs.ENGLISH_US, translations[Langs.ENGLISH_US]);
+        const res = LangData.create(Langs.ENGLISH_US, translations.langs[Langs.ENGLISH_US].strings);
         expect(res).toBeDefined();
         expect(res.getStrings()).toBeDefined();
     });

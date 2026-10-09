@@ -46,23 +46,31 @@ The build command:
 
 1. **Scans your locales directory** (default: `./locales`) for translation files
 2. **Merges nested files** - Combines all JSON files (both root-level and nested directories) into flat translation objects
-3. **Applies fallback chains** - Automatically fills missing translations using configured fallback languages
-4. **Validates translations** - Checks for missing or empty translations (if `checkTranslations` is enabled)
+3. **Resolves fallback chains** - Records, per language, the languages to fall back to, and keeps only the strings that differ from what those fallbacks already give
+4. **Validates translations** - Checks for missing or empty translations (if `checkTranslations` is enabled), and rejects malformed placeholders
 5. **Outputs a single file** - Creates `.hermes/translations.json` containing all languages in one optimized bundle
+
+At runtime a missing key is looked up along the fallback chain, so a partial language costs only its own strings instead of a full copy of its fallback. Strings are parsed on first use, and strings without placeholders are never parsed at all.
 
 The output file structure:
 ```json
 {
-  "en-US": {
-    "key1": "value1",
-    "nested.key2": "value2"
-  },
-  "fr": {
-    "key1": "valeur1",
-    "nested.key2": "valeur2"
+  "$hermes": 2,
+  "langs": {
+    "en-US": {
+      "fallbacks": ["en-GB"],
+      "strings": { "key1": "value1", "nested.key2": "value2" }
+    },
+    "fr": {
+      "fallbacks": ["en-US", "en-GB"],
+      "strings": { "key1": "valeur1" }
+    },
+    "es-ES": "en-US"
   }
 }
 ```
+
+A string in place of a language is a whole-language alias, used when that language has no file of its own.
 
 ### Configuration
 

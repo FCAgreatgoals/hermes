@@ -51,10 +51,10 @@ export default class Context {
      */
     public translate(key: string, object?: unknown): string {
         const fullKey = this.basePath ? `${this.basePath}.${key}` : key;
-        const value = this.data.getStrings()[fullKey];
+        const value = this.data.resolve(fullKey, object);
 
-        if (value)
-            return value.resolve(object);
+        if (value !== undefined)
+            return value;
 
         throw new Error(`Translation not found for key: ${fullKey} in lang: ${this.data.lang}`);
     }
