@@ -135,8 +135,12 @@ function loadBuilt(built: BuiltTranslations): Record<Langs, LangData> {
         if (typeof entry !== 'string') translations[lang] = LangData.create(lang, entry.strings);
     }
 
+    // An alias that loops or points at nothing is left out, and getContext falls back to the default
+    // language for it, as 1.3 did: two empty files that fall back on each other must not stop init.
     for (const [lang, entry] of entries) {
-        if (typeof entry === 'string') translations[lang] = resolveAlias(built, lang, translations);
+        if (typeof entry !== 'string') continue;
+        const target = resolveAlias(built, lang, translations);
+        if (target) translations[lang] = target;
     }
 
     for (const [lang, entry] of entries) {
@@ -147,17 +151,16 @@ function loadBuilt(built: BuiltTranslations): Record<Langs, LangData> {
     return translations;
 }
 
-function resolveAlias(built: BuiltTranslations, lang: Langs, translations: Record<Langs, LangData>): LangData {
+function resolveAlias(built: BuiltTranslations, lang: Langs, translations: Record<Langs, LangData>): LangData | undefined {
     const seen = new Set<string>();
     let target: string = lang;
 
     while (typeof built.langs[target] === 'string') {
-        if (seen.has(target)) throw new Error(`Circular language reference from '${lang}'`);
+        if (seen.has(target)) return undefined;
         seen.add(target);
         target = built.langs[target] as string;
     }
 
-    if (!translations[target as Langs]) throw new Error(`Language '${lang}' refers to missing '${target}'`);
     return translations[target as Langs];
 }
 
@@ -166,7 +169,8 @@ function loadLegacy(built: Record<string, Record<string, string> | string>): Rec
 
     for (const lang of Object.keys(built) as Array<Langs>) {
         const entry = built[lang];
-        translations[lang] = typeof entry === 'string' ? translations[entry as Langs] : LangData.create(lang, entry);
+        const data = typeof entry === 'string' ? translations[entry as Langs] : LangData.create(lang, entry);
+        if (data) translations[lang] = data;
     }
 
     return translations;

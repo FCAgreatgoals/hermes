@@ -63,4 +63,22 @@ describe('BuildTranslations_Test', () => {
         expect(built.langs['en-GB']).toBe('en-US');
     });
 
+    test('circular_aliases_do_not_break_init', () => {
+        const fs = require('fs');
+        const path = require('path');
+        const os = require('os');
+        const Hermes = require('../src/classes/Hermes').default;
+        const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hermes-'));
+        fs.writeFileSync(path.join(dir, 'translations.json'), JSON.stringify({
+            $hermes: 2,
+            langs: { 'en-US': { fallbacks: [], strings: { a: 'EN' } }, 'es-ES': 'es-419', 'es-419': 'es-ES' }
+        }));
+        jest.spyOn(require('../src/cli/HermesConfig'), 'loadConfig').mockReturnValue({ ...config, buildDir: dir });
+        (Hermes as unknown as { instance: unknown }).instance = undefined;
+
+        expect(() => Hermes.init()).not.toThrow();
+        expect(Hermes.getContext('es-ES').t('a')).toBe('EN');
+        expect(Hermes.getLocalizedObject('a')).toEqual({ 'en-US': 'EN' });
+    });
+
 });

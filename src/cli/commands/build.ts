@@ -26,19 +26,18 @@ import {
 } from 'fs';
 import { join } from 'path';
 
-import { loadConfig } from '../HermesConfig';
+import { HermesConfig, loadConfig } from '../HermesConfig';
 import { collectLocales, findTotalFallbackRef, loadTranslations, loadTranslationsRaw, resolutionOrder } from '../utils';
 import { validateTranslations } from '../validations';
 import { readLock, refreshLock, writeLock } from '../lock';
 import { Langs, TRANSLATIONS_FILE_NAME } from '../../constants';
 import { BuiltTranslations } from '../../types';
 import { FormattedString } from '../../classes/format/FormattedString';
-import { HermesConfig } from '../HermesConfig';
 
 export function registerBuildCommand(program: Command) {
     program
         .command('build')
-        .description('Builds merged flat translation files per language with fallback support')
+        .description('Builds one translation file holding each language\'s own strings and its fallback order')
         .action(async () => {
             const config = loadConfig();
 
