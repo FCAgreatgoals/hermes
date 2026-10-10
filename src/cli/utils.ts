@@ -186,3 +186,29 @@ export function findTotalFallbackRef(locale: string, raw: Record<string, string>
 
     return null;
 }
+
+/**
+ * Languages a locale falls back to, in the order {@link loadTranslations} merges them: a depth-first
+ * walk of the fallback chains where the first language to hold a key wins. The locale itself is left out.
+ */
+export function resolutionOrder(locale: string, config: HermesConfig): string[] {
+    const order: string[] = [];
+    const visited = new Set<string>();
+
+    const visit = (current: string) => {
+        if (visited.has(current)) return;
+        visited.add(current);
+        order.push(current);
+
+        const localeFallbacks = config.fallbackChains[current] || [];
+        const defaultFallbacks = config.fallbackChains.default || [];
+
+        for (const fallback of [
+            ...localeFallbacks,
+            ...defaultFallbacks.filter(lang => lang !== current && !localeFallbacks.includes(lang))
+        ]) visit(fallback);
+    };
+    visit(locale);
+
+    return order.slice(1);
+}

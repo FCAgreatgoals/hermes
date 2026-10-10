@@ -18,7 +18,7 @@
  */
 import { readFileSync } from 'fs';
 
-import { LangsKeys, LocalizedObject } from '../types';
+import { BuiltTranslations, LangsKeys, LocalizedObject, isBuiltTranslations } from '../types';
 import { Langs, DEFAULT_TRANSLATION_DIR, TRANSLATIONS_FILE_NAME, langToLocale } from '../constants';
 import LangData from './LangData';
 import Context from './Context';
@@ -66,16 +66,9 @@ export default class Hermes {
 
         Hermes.instance = new Hermes(config.fallbackChains.default[0]);
 
-        const translations = JSON.parse(readFileSync(`${config.buildDir}/${TRANSLATIONS_FILE_NAME}`, 'utf-8'));
+        const built = JSON.parse(readFileSync(`${config.buildDir}/${TRANSLATIONS_FILE_NAME}`, 'utf-8'));
 
-        for (const lang of Object.keys(translations) as Array<Langs>) {
-            if (typeof translations[lang] === 'string') {
-                Hermes.instance.translations[lang] = Hermes.instance.translations[translations[lang] as Langs];
-                continue;
-            }
-
-            Hermes.instance.translations[lang] = LangData.create(lang, translations[lang]);
-        }
+        Hermes.instance.translations = isBuiltTranslations(built) ? loadBuilt(built) : loadLegacy(built);
 
         if (Hermes.instance.defaultLocale && !Hermes.instance.translations[Hermes.instance.defaultLocale]) {
             throw new Error(`Default locale '${Hermes.instance.defaultLocale}' not found in translations`);
@@ -118,9 +111,8 @@ export default class Hermes {
         const langs = Object.keys(Hermes.instance.translations) as Langs[];
 
         for (const lang of langs) {
-            if (!Hermes.instance.translations[lang].getStrings()[key])
-                continue;
-            object[lang] = Hermes.instance.translations[lang].getStrings()[key].resolve({});
+            const value = Hermes.instance.translations[lang].resolve(key, {});
+            if (value !== undefined) object[lang] = value;
         }
 
         if (Object.keys(object).length === 0)
@@ -133,4 +125,53 @@ export default class Hermes {
         return langToLocale[lang];
     }
 
+}
+
+function loadBuilt(built: BuiltTranslations): Record<Langs, LangData> {
+    const translations = {} as Record<Langs, LangData>;
+    const entries = Object.entries(built.langs) as Array<[Langs, BuiltTranslations['langs'][string]]>;
+
+    for (const [lang, entry] of entries) {
+        if (typeof entry !== 'string') translations[lang] = LangData.create(lang, entry.strings);
+    }
+
+    // An alias that loops or points at nothing is left out, and getContext falls back to the default
+    // language for it, as 1.3 did: two empty files that fall back on each other must not stop init.
+    for (const [lang, entry] of entries) {
+        if (typeof entry !== 'string') continue;
+        const target = resolveAlias(built, lang, translations);
+        if (target) translations[lang] = target;
+    }
+
+    for (const [lang, entry] of entries) {
+        if (typeof entry === 'string') continue;
+        translations[lang].setFallbacks(entry.fallbacks.map(fallback => translations[fallback as Langs]).filter(Boolean));
+    }
+
+    return translations;
+}
+
+function resolveAlias(built: BuiltTranslations, lang: Langs, translations: Record<Langs, LangData>): LangData | undefined {
+    const seen = new Set<string>();
+    let target: string = lang;
+
+    while (typeof built.langs[target] === 'string') {
+        if (seen.has(target)) return undefined;
+        seen.add(target);
+        target = built.langs[target] as string;
+    }
+
+    return translations[target as Langs];
+}
+
+function loadLegacy(built: Record<string, Record<string, string> | string>): Record<Langs, LangData> {
+    const translations = {} as Record<Langs, LangData>;
+
+    for (const lang of Object.keys(built) as Array<Langs>) {
+        const entry = built[lang];
+        const data = typeof entry === 'string' ? translations[entry as Langs] : LangData.create(lang, entry);
+        if (data) translations[lang] = data;
+    }
+
+    return translations;
 }

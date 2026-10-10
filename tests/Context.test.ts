@@ -7,7 +7,8 @@ describe('Context_Init_Test', () => {
 
     test('base_test', () => {
         const translations = JSON.parse(readFileSync('./.hermes/translations.json', 'utf-8'));
-        const data = LangData.create(Langs.ENGLISH_US, translations[Langs.ENGLISH_US]);
+        const data = LangData.create(Langs.ENGLISH_US, translations.langs[Langs.ENGLISH_US].strings);
+        data.setFallbacks([LangData.create(Langs.ENGLISH_UK, translations.langs[Langs.ENGLISH_UK].strings)]);
 
         const ctx = Context.create(data);
         expect(ctx).toBeDefined();
@@ -15,7 +16,8 @@ describe('Context_Init_Test', () => {
 
     test('get_string', () => {
         const translations = JSON.parse(readFileSync('./.hermes/translations.json', 'utf-8'));
-        const data = LangData.create(Langs.ENGLISH_US, translations[Langs.ENGLISH_US]);
+        const data = LangData.create(Langs.ENGLISH_US, translations.langs[Langs.ENGLISH_US].strings);
+        data.setFallbacks([LangData.create(Langs.ENGLISH_UK, translations.langs[Langs.ENGLISH_UK].strings)]);
 
         const ctx = Context.create(data);
         expect(ctx.t('hello.world')).toBeDefined();
@@ -23,7 +25,8 @@ describe('Context_Init_Test', () => {
 
     test('get_invalid_string', () => {
         const translations = JSON.parse(readFileSync('./.hermes/translations.json', 'utf-8'));
-        const data = LangData.create(Langs.ENGLISH_US, translations[Langs.ENGLISH_US]);
+        const data = LangData.create(Langs.ENGLISH_US, translations.langs[Langs.ENGLISH_US].strings);
+        data.setFallbacks([LangData.create(Langs.ENGLISH_UK, translations.langs[Langs.ENGLISH_UK].strings)]);
 
         const ctx = Context.create(data);
         expect(() => ctx.t('hello.test')).toThrow();
@@ -31,7 +34,8 @@ describe('Context_Init_Test', () => {
 
     test('context_with_basepath', () => {
         const translations = JSON.parse(readFileSync('./.hermes/translations.json', 'utf-8'));
-        const data = LangData.create(Langs.ENGLISH_US, translations[Langs.ENGLISH_US]);
+        const data = LangData.create(Langs.ENGLISH_US, translations.langs[Langs.ENGLISH_US].strings);
+        data.setFallbacks([LangData.create(Langs.ENGLISH_UK, translations.langs[Langs.ENGLISH_UK].strings)]);
 
         const ctx = Context.create(data, 'hello');
         expect(ctx.t('world')).toBeDefined();
@@ -39,7 +43,8 @@ describe('Context_Init_Test', () => {
 
     test('context_with_basepath_invalid', () => {
         const translations = JSON.parse(readFileSync('./.hermes/translations.json', 'utf-8'));
-        const data = LangData.create(Langs.ENGLISH_US, translations[Langs.ENGLISH_US]);
+        const data = LangData.create(Langs.ENGLISH_US, translations.langs[Langs.ENGLISH_US].strings);
+        data.setFallbacks([LangData.create(Langs.ENGLISH_UK, translations.langs[Langs.ENGLISH_UK].strings)]);
 
         const ctx = Context.create(data, 'hello');
         expect(() => ctx.t('test')).toThrow();
